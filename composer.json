@@ -1,0 +1,47 @@
+{
+    "name": "wpstrap/wordpress-plugin-boilerplate",
+    "description": "Wordpress Plugin Boilerplate",
+    "version": "0.3.1",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "homepage": "https://wp-strap.com",
+    "autoload": {
+        "psr-4": {
+            "Lemonway\\": "src/"
+        }
+    },
+    "scripts": {
+        "phpcs": "./vendor/bin/phpcs",
+        "phpcs:fix": "./vendor/bin/phpcbf"
+    },
+    "require": {
+        "php": ">=7.1"
+    },
+    "require-dev": {
+        "wp-coding-standards/wpcs": "^3.0",
+        "squizlabs/php_codesniffer": "^3.8",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "woocommerce/woocommerce-sniffs": "^1.0"
+    },
+    "keywords": [
+        "wordpress",
+        "plugin",
+        "boilerplate",
+        "framework"
+    ],
+    "authors": [
+        {
+            "name": "WP-Strap",
+            "email": "hello@wp-strap.com",
+            "homepage": "https://wp-strap.com"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

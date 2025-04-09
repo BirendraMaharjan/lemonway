@@ -1,0 +1,165 @@
+:root {
+	// Color Palette
+	--lemonway-primary-color: #3498db; // Blue
+	--lemonway-secondary-color: #2ecc71; // Green
+	--lemonway-accent-color: #e74c3c; // Red
+	--lemonway-background-color: #f5f5f5; // Light Gray
+	--lemonway-text-color: #333333; // Dark Gray
+	--lemonway-link-color: #1abc9c; // Teal
+	--lemonway-border-color: #dddddd; // Light Border Gray
+	--lemonway-success-color: #28a745; // Green for success
+	--lemonway-warning-color: #f39c12; // Orange for warnings
+	--lemonway-error-color: #e74c3c; // Red for errors
+	--lemonway-info-color: #00bcd4; // Cyan for info
+
+	// Dark Theme
+	--lemonway-dark-background-color: #2c3e50; // Dark Grayish Blue
+	--lemonway-dark-text-color: #ecf0f1; // Light Text for Dark Mode
+	--lemonway-dark-border-color: #34495e; // Dark Border Color
+
+	// Light Theme
+	--lemonway-light-background-color: #ffffff; // White Background
+	--lemonway-light-text-color: #2d3436; // Dark Text for Light Mode
+	--lemonway-light-border-color: #b2bec3; // Light Border Color
+}
+
+// Utility Classes for Text Color
+.lemonway-text-primary {
+	color: var(--lemonway-primary-color);
+}
+
+.lemonway-text-secondary {
+	color: var(--lemonway-secondary-color);
+}
+
+.lemonway-text-accent {
+	color: var(--lemonway-accent-color);
+}
+
+.lemonway-text-success {
+	color: var(--lemonway-success-color);
+}
+
+.lemonway-text-warning {
+	color: var(--lemonway-warning-color);
+}
+
+.lemonway-text-error {
+	color: var(--lemonway-error-color);
+}
+
+.lemonway-text-info {
+	color: var(--lemonway-info-color);
+}
+
+.lemonway-text-link {
+	color: var(--lemonway-link-color);
+}
+
+// Utility Classes for Background Color
+.lemonway-bg-primary {
+	background-color: var(--lemonway-primary-color);
+}
+
+.lemonway-bg-secondary {
+	background-color: var(--lemonway-secondary-color);
+}
+
+.lemonway-bg-accent {
+	background-color: var(--lemonway-accent-color);
+}
+
+.lemonway-bg-success {
+	background-color: var(--lemonway-success-color);
+}
+
+.lemonway-bg-warning {
+	background-color: var(--lemonway-warning-color);
+}
+
+.lemonway-bg-error {
+	background-color: var(--lemonway-error-color);
+}
+
+.lemonway-bg-info {
+	background-color: var(--lemonway-info-color);
+}
+
+.lemonway-bg-link {
+	background-color: var(--lemonway-link-color);
+}
+
+.lemonway-bg-light {
+	background-color: var(--lemonway-light-background-color);
+}
+
+.lemonway-bg-dark {
+	background-color: var(--lemonway-dark-background-color);
+}
+
+// Utility Classes for Border Color
+.lemonway-border-primary {
+	border-color: var(--lemonway-primary-color);
+}
+
+.lemonway-border-secondary {
+	border-color: var(--lemonway-secondary-color);
+}
+
+.lemonway-border-accent {
+	border-color: var(--lemonway-accent-color);
+}
+
+.lemonway-border-success {
+	border-color: var(--lemonway-success-color);
+}
+
+.lemonway-border-warning {
+	border-color: var(--lemonway-warning-color);
+}
+
+.lemonway-border-error {
+	border-color: var(--lemonway-error-color);
+}
+
+.lemonway-border-info {
+	border-color: var(--lemonway-info-color);
+}
+
+.lemonway-border-link {
+	border-color: var(--lemonway-link-color);
+}
+
+.lemonway-border-light {
+	border-color: var(--lemonway-light-border-color);
+}
+
+.lemonway-border-dark {
+	border-color: var(--lemonway-dark-border-color);
+}
+
+// Dark Theme Classes
+.lemonway-text-dark {
+	color: var(--lemonway-dark-text-color);
+}
+
+.lemonway-bg-dark-theme {
+	background-color: var(--lemonway-dark-background-color);
+}
+
+.lemonway-border-dark-theme {
+	border-color: var(--lemonway-dark-border-color);
+}
+
+// Light Theme Classes
+.lemonway-text-light {
+	color: var(--lemonway-light-text-color);
+}
+
+.lemonway-bg-light-theme {
+	background-color: var(--lemonway-light-background-color);
+}
+
+.lemonway-border-light-theme {
+	border-color: var(--lemonway-light-border-color);
+}

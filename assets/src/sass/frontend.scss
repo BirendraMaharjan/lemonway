@@ -1,0 +1,79 @@
+/**
+* Importing by glob example
+* https://github.com/maoberlehner/node-sass-magic-importer/tree/master/packages/node-sass-magic-importer#globbing
+ */
+@import 'components/**/*.scss';
+
+
+.lemonway-datepicker{
+	&.ui-datepicker {
+		width: 250px; /* Adjust the popup width */
+	}
+	.ui-datepicker-year,
+	.ui-datepicker-month {
+		display: inline-block; /* Display inline-block */
+		width: 70px;           /* Adjust the width as needed */
+		margin-right: 1% !important;     /* Optional: Add some spacing between them */
+		text-align: center;    /* Optional: Center the text */
+	}
+}
+
+
+.lemonway-hide {
+	display: none;
+}
+.payment-field-lemonway {
+	text-align: left;
+	background: #ffffff;
+	font-family: 'Arial', 'Helvetica', sans-serif;
+
+	& > .dokan-form-group:first-child {
+		& > label {
+			display: none;
+		}
+		.dokan-w6 {
+			width: 100%;
+		}
+	}
+
+	label {
+		color: black;
+		font-weight: bolder;
+	}
+
+	& + .dokan-form-group {
+		display: none;
+	}
+}
+
+.dokan-dashboard .dokan-lemonway-settings-template {
+	fieldset {
+		border: none;
+	}
+	.navigation {
+		ul {
+			padding: 0;
+			display: flex;
+
+			li {
+				padding: 1rem 1rem;
+			}
+		}
+	}
+}
+.lemonway-settings-account-type-fields{
+	.form-check{
+		display: inline-block;
+
+		.form-check-label{
+			font-weight: 500;
+		}
+	}
+
+}
+.lemonway-settings-company-fields{
+	border: 1px solid var(--lemonway-color-border);
+	padding: 0 15px;
+	border-radius: 5px;
+	margin-bottom: 25px;
+}

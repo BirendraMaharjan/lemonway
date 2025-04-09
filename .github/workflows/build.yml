@@ -1,0 +1,73 @@
+name: Build and Release
+
+permissions:
+  contents: write  # Needed to push build files back to the repo
+
+on:
+  push:
+    branches: [master]         # Only trigger on push to master
+  pull_request:
+    branches: [main]           # Only trigger on PRs targeting main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🟢 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.10.0'
+
+      - name: 📦 Install Node dependencies
+        run: npm install
+
+      - name: ⚙️ Build production assets
+        run: npm run prod
+
+      - name: 🐘 Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
+      - name: 🎼 Install Composer
+        run: |
+          curl -sS https://getcomposer.org/installer | php
+          sudo mv composer.phar /usr/local/bin/composer
+
+      - name: 🎯 Install Composer (prod only)
+        run: composer install --no-dev --optimize-autoloader --prefer-dist
+
+      - name: 🧹 Clear Composer cache
+        run: composer clear-cache
+
+      - name: 🔐 Configure Git (with token)
+        run: |
+          git config --global user.name "Birendra Maharjan"
+          git config --global user.email "birendra8917@gmail.com"
+          git remote set-url origin https://BirendraMaharjan:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+
+      - name: 🚀 Force push build files to main
+        run: |
+          # Check if 'main' branch exists on remote
+          if git ls-remote --exit-code --heads origin main; then
+            echo "✅ 'main' branch exists on remote."
+          else
+            echo "🚀 'main' branch does not exist. Creating it now..."
+            current_branch=$(git rev-parse --abbrev-ref HEAD)
+            git checkout -b main
+            git push -u origin main
+            git checkout "$current_branch"
+          fi
+          
+          # Checkout main branch
+          git checkout -b main
+          git branch  # This will list all local branches and highlight the current branch
+          
+          # Push any changes (e.g. built files)
+          git add .
+          git commit -m "🔧 Auto-update build files [CI skip]" || echo "No changes to commit"
+          git push -u origin main --force
