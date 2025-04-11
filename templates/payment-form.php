@@ -41,16 +41,16 @@
 		<div class="lemonway-payment-method-card-fields" id="lemonway-payment-method-card-fields">
 
 			<label for="holder-name"><?php esc_html_e( "Holder's Name", 'lemonway' ); ?></label>
-			<div class="field textbox" id="holder-name"></div>
+			<div class="field textbox" id="lemonway-card-holder-name"></div>
 
 			<label for="card-number"><?php esc_html_e( 'Card Number', 'lemonway' ); ?></label>
-			<div class="field textbox" id="card-number"></div>
+			<div class="field textbox" id="lemonway-card-number"></div>
 
 			<label for="expiration-date"><?php esc_html_e( 'Expiration Date', 'lemonway' ); ?></label>
-			<div class="field textbox" id="expiration-date"></div>
+			<div class="field textbox" id="lemonway-card-expiration-date"></div>
 
 			<label for="cvv"><?php esc_html_e( 'CVV', 'lemonway' ); ?></label>
-			<div class="field textbox" id="cvv"></div>
+			<div class="field textbox" id="lemonway-card-cvv"></div>
 
 			<!--<label for="register-card">< ?php esc_html_e("Register Card?", 'lemonway'); ?></label>
 			<span class="field checkbox" id="register-card"></span>-->

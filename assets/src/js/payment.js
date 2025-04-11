@@ -50,6 +50,8 @@ jQuery(function ($) {
 		 */
 		async initialize() {
 			try {
+				this.clear();
+
 				this.showLoadingState();
 
 				// Initialize payment methods in parallel
@@ -61,9 +63,7 @@ jQuery(function ($) {
 				this.updatePaymentUI();
 				this.setupPaymentMethodListeners();
 			} catch (error) {
-				this.handleError(
-					`<div class="woocommerce-error">${wc_checkout_params.i18n_checkout_error}</div>`
-				);
+				this.handleError(`${wc_checkout_params.i18n_checkout_error}`);
 				// eslint-disable-next-line no-console
 				console.error('Payment initialization failed:', error);
 			}
@@ -71,30 +71,43 @@ jQuery(function ($) {
 		init() {
 			$(() => {
 				this.showLoadingState();
+				this.selectPaymentMethod();
 
-				this.paymentMethod = $(
-					'input[name="payment_method"]:checked',
-					this.checkoutForm
-				).val();
-				this.paymentType =
-					$(
-						'input[name="lemonway_payment_type"]:checked',
-						this.checkoutForm
-					).val() || 'card';
-
-				$(document.body).on('updated_checkout', async () => {
+				// Initialize immediately and on updates
+				const doInitialize = async () => {
 					await this.initialize();
 					setTimeout(() => {
 						this.hideLoadingState();
 					}, 1000);
-				});
+				};
+
+				$(document.body).on('updated_checkout', doInitialize);
+				doInitialize(); // Initial call
 			});
+		},
+
+		clear() {
+			// Cleanup existing instances
+			if (this.isCardInitialized) {
+				// Clean up hosted fields manually if needed
+				$('#lemonway-card-holder-name').empty();
+				$('#lemonway-card-number').empty();
+				$('#lemonway-card-expiration-date').empty();
+				$('#lemonway-card-cvv').empty();
+				this.hostedFields = null;
+				this.isCardInitialized = null;
+			}
+
+			if (this.isPaypalInitialized) {
+				$(this.paypalContainerSelector).empty();
+				this.isPaypalInitialized = false;
+			}
 		},
 
 		/**
 		 * Show loading state on checkout form.
 		 */
-		showLoadingState() {
+		showLoadingState(removeError = false) {
 			$(this.loading)
 				.addClass('processing')
 				.block({
@@ -104,6 +117,12 @@ jQuery(function ($) {
 						opacity: 0.6,
 					},
 				});
+			if (removeError) {
+				// Safely remove existing notices.
+				$(
+					'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .is-error, .is-success'
+				).remove();
+			}
 		},
 
 		/**
@@ -136,14 +155,29 @@ jQuery(function ($) {
 
 			// Safely remove existing notices.
 			$(
-				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message'
+				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .is-error, .is-success'
 			).remove();
 
 			// Safely add new error message.
 			if ($(this.checkoutForm).length) {
-				$(this.checkoutForm).prepend(
-					`<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">${message}</div>`
-				);
+				let content = message;
+
+				// Create a temporary wrapper to parse the message as HTML
+				const temp = $('<div>').html(message);
+
+				// Check for woocommerce-error class
+				if (
+					temp.find('.woocommerce-error').length === 0 &&
+					!temp.is('.woocommerce-error')
+				) {
+					content = `<div class="woocommerce-error">${message}</div>`;
+				}
+
+				$(this.checkoutForm).prepend(`
+					<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">
+						${content}
+					</div>
+				`);
 
 				// Trigger validation.
 				$(this.checkoutForm)
@@ -213,6 +247,22 @@ jQuery(function ($) {
 		},
 
 		/**
+		 * Select payment method and type
+		 */
+		selectPaymentMethod() {
+			this.paymentType =
+				$(this.checkoutForm)
+					.find('input[name="lemonway_payment_type"]:checked')
+					.val() || '';
+
+			this.paymentMethod = $(this.checkoutForm)
+				.find('input[name="payment_method"]:checked')
+				.val();
+
+			this.updatePaymentUI();
+		},
+
+		/**
 		 * Setup listeners for payment method changes
 		 */
 		setupPaymentMethodListeners() {
@@ -220,18 +270,20 @@ jQuery(function ($) {
 				'change',
 				'input[name="payment_method"], input[name="lemonway_payment_type"]',
 				() => {
-					this.paymentType =
-						$(this.checkoutForm)
-							.find('input[name="lemonway_payment_type"]:checked')
-							.val() || 'card';
-
-					this.paymentMethod = $(this.checkoutForm)
-						.find('input[name="payment_method"]:checked')
-						.val();
-
-					this.updatePaymentUI();
+					this.selectPaymentMethod();
 				}
 			);
+
+			// Add country change listener
+			$(this.checkoutForm).on('change', 'select#billing_country', () => {
+				//this.handleCountryChange();
+			});
+		},
+
+		async handleCountryChange() {
+			this.showLoadingState();
+			await this.initialize();
+			this.hideLoadingState();
 		},
 
 		/**
@@ -259,22 +311,23 @@ jQuery(function ($) {
 							},
 							client: {
 								holderName: {
-									containerId: 'holder-name',
-									placeHolder: 'Cardholder Name',
+									containerId: 'lemonway-card-holder-name',
+									placeHolder: 'Hans Müller',
 									style,
 								},
 								cardNumber: {
-									containerId: 'card-number',
+									containerId: 'lemonway-card-number',
 									placeHolder: '4111 1111 1111 1111',
 									style,
 								},
 								expirationDate: {
-									containerId: 'expiration-date',
+									containerId:
+										'lemonway-card-expiration-date',
 									placeHolder: 'MM/YY',
 									style,
 								},
 								cvv: {
-									containerId: 'cvv',
+									containerId: 'lemonway-card-cvv',
 									placeHolder: '123',
 									style,
 								},
@@ -285,17 +338,23 @@ jQuery(function ($) {
 						this.hostedFields.mount();
 
 						// Handle card form submission
-						$(document).on('click', 'form #place_order', (e) => {
-							if (
-								this.paymentType !== 'card' ||
-								!this.isLemonwaySelected()
-							) {
-								return;
-							}
+						$(document).on(
+							'click',
+							this.checkoutFormButton,
+							(e) => {
+								this.selectPaymentMethod();
 
-							e.preventDefault();
-							this.processCardPayment();
-						});
+								if (
+									this.paymentType !== 'card' ||
+									!this.isLemonwaySelected()
+								) {
+									return;
+								}
+
+								e.preventDefault();
+								this.processCardPayment();
+							}
+						);
 
 						resolve();
 					} else {
@@ -316,7 +375,7 @@ jQuery(function ($) {
 			}
 
 			this.isProcessing = true;
-			this.showLoadingState();
+			this.showLoadingState(true);
 
 			try {
 				const response = await this.submitOrderRequest();
@@ -327,9 +386,7 @@ jQuery(function ($) {
 				}
 			} catch (error) {
 				this.handleError(
-					`<div class="woocommerce-error">${
-						error.message || wc_checkout_params.i18n_checkout_error
-					}</div>`
+					`${error.message || wc_checkout_params.i18n_checkout_error}`
 				);
 			}
 		},
@@ -341,6 +398,9 @@ jQuery(function ($) {
 		 */
 		async submitCardPayment(token) {
 			try {
+				if (!this.hostedFields) {
+					throw new Error('Hosted fields not initialized');
+				}
 				this.hostedFields.config.webkitToken = token;
 				await this.hostedFields.submit(true);
 
@@ -399,18 +459,13 @@ jQuery(function ($) {
 				throw new Error('Lemonway payment method not selected');
 			}
 
-			this.showLoadingState();
-			$(
-				'.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message'
-			).remove();
+			this.showLoadingState(true);
 
 			try {
 				const response = await this.submitOrderRequest();
 				return this.processPaymentResponse(response);
 			} catch (error) {
-				this.handleError(
-					`<div class="woocommerce-error">${error.message}</div>`
-				);
+				this.handleError(`${error.message}`);
 				throw error;
 			}
 		},
@@ -429,9 +484,7 @@ jQuery(function ($) {
 				)
 					.then(resolve)
 					.catch((error) => {
-						this.handleError(
-							`<div class="woocommerce-error">${error.message}</div>`
-						);
+						this.handleError(`${error.message}`);
 						resolve();
 					});
 			});
@@ -441,13 +494,13 @@ jQuery(function ($) {
 		 * Handle canceled PayPal payment
 		 */
 		cancelPaypalPayment() {
-			this.hideLoadingState();
 			this.handleError(
-				`<div class="woocommerce-error">${__(
+				` ${__(
 					'Your payment has been cancelled. Please try again or contact support if the issue persists.',
 					'lemonway'
-				)}</div>`
+				)}`
 			);
+			this.hideLoadingState();
 			this.resetOrderData();
 		},
 
@@ -458,9 +511,7 @@ jQuery(function ($) {
 		 */
 		handlePaypalError(error) {
 			if (!$('.woocommerce-error').length) {
-				this.handleError(
-					`<div class="woocommerce-error">${error.toString()}</div>`
-				);
+				this.handleError(`${error.toString()}`);
 			}
 			this.hideLoadingState();
 			this.resetOrderData();
@@ -487,6 +538,9 @@ jQuery(function ($) {
 					: wc_checkout_params.checkout_url,
 				data: requestData,
 				dataType: 'json',
+			}).fail((response, status, error) => {
+				this.hideLoadingState();
+				this.handleError(`${error}`);
 			});
 		},
 
@@ -523,9 +577,12 @@ jQuery(function ($) {
 
 					default:
 						// eslint-disable-next-line no-console
-						console.warn(
-							'Unknown payment type:',
-							response.payment_type
+						console.warn('Unknown payment type:', response);
+						this.handleError(
+							`${__(
+								'Unknown payment type. Please try again or contact support if the issue persists.',
+								'lemonway'
+							)}`
 						);
 						return null;
 				}

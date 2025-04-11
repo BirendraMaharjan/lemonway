@@ -203,7 +203,7 @@ class Lemonway extends WC_Payment_Gateway {
 			return array(
 				'result'   => 'failure',
 				'redirect' => false,
-				'messages' => '<ul class="woocommerce-error" role="alert"><li>' . $error_message . '</li></ul>',
+				'messages' => '<ul class="woocommerce-error" role="alert"><li>' . wp_kses_post( $error_message ) . '</li></ul>',
 			);
 		}
 
@@ -257,9 +257,12 @@ class Lemonway extends WC_Payment_Gateway {
 				'autoCommission' => false,
 			),
 			'amountBreakdown' => array(
-				'totalItems' => Helper::toCents( $order->get_subtotal() ),
-				'shipping'   => Helper::toCents( $order->get_shipping_total() ),
-				'discount'   => Helper::toCents( $order->get_total_discount() ),
+				'totalItems'       => Helper::toCents( $order->get_subtotal() ),
+				'shipping'         => Helper::toCents( (float) $order->get_shipping_total() + (float) $order->get_shipping_tax() ),
+				'totalItemTaxes'   => Helper::toCents( $order->get_total_tax() ),
+				'handling'         => 0,
+				'shippingDiscount' => 0,
+				'discount'         => Helper::toCents( $order->get_total_discount() ),
 			),
 			'items'           => $this->getProductItemsForPaypal( $order ),
 			'delivery'        => array(

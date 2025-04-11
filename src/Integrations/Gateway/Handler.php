@@ -101,10 +101,10 @@ class Handler {
 	}
 
 	public function createOrder() {
-		$order_id = $this->do_validation();
+		$order = $this->do_validation();
 
 		$lemonway        = new Lemonway();
-		$process_payment = $lemonway->process_payment( $order_id );
+		$process_payment = $lemonway->process_payment( $order->get_id() );
 
 		if ( isset( $process_payment['result'] ) && $process_payment['result'] === 'failure' ) {
 			WC()->session->set( 'wc_notices', array() );

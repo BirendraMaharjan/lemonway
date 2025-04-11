@@ -114,7 +114,7 @@ jQuery(function ($) {
 			// Show the loading state in the modal
 			$('#lemonway-modal .modal-content').html(
 				'<div class="loading-spinner">' +
-					__('Loading...', 'lemonway') +
+					__('Loading &hellip;', 'lemonway') +
 					'</div>'
 			);
 		},
@@ -193,9 +193,6 @@ jQuery(function ($) {
 				enctype: 'multipart/form-data',
 				success(response) {
 					const button = '.lemonway-save-dokan-btn';
-
-					console.log(response.data);
-					console.log(response);
 					if (response.success) {
 						if (response.data.btn_text) {
 							form.find(button).text(response.data.btn_text);

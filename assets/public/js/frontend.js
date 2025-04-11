@@ -177,7 +177,7 @@ jQuery(function ($) {
     },
     showLoadingState: function showLoadingState() {
       // Show the loading state in the modal
-      $('#lemonway-modal .modal-content').html('<div class="loading-spinner">' + __('Loading...', 'lemonway') + '</div>');
+      $('#lemonway-modal .modal-content').html('<div class="loading-spinner">' + __('Loading &hellip;', 'lemonway') + '</div>');
     },
     toggleModal: function toggleModal(show) {
       // Show or hide the modal
@@ -238,8 +238,6 @@ jQuery(function ($) {
         enctype: 'multipart/form-data',
         success: function success(response) {
           var button = '.lemonway-save-dokan-btn';
-          console.log(response.data);
-          console.log(response);
           if (response.success) {
             if (response.data.btn_text) {
               form.find(button).text(response.data.btn_text);

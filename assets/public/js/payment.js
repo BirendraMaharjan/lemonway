@@ -8,7 +8,7 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 /**
- * Lemonway Payment Gateway Handler for WooCommerce
+ * Lemonway Payment Gateway Handler for WooCommerce yml
  *
  * Handles all frontend payment processing for Lemonway gateway including:
  * - Credit card payments via Hosted Fields
@@ -61,57 +61,83 @@ jQuery(function ($) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
               _context.prev = 0;
+              _this.clear();
               _this.showLoadingState();
 
               // Initialize payment methods in parallel
-              _context.next = 4;
+              _context.next = 5;
               return Promise.allSettled([_this.initializePaypalButton(), _this.initializeCardFields()]);
-            case 4:
+            case 5:
               _this.updatePaymentUI();
               _this.setupPaymentMethodListeners();
-              _context.next = 12;
+              _context.next = 13;
               break;
-            case 8:
-              _context.prev = 8;
+            case 9:
+              _context.prev = 9;
               _context.t0 = _context["catch"](0);
-              _this.handleError("<div class=\"woocommerce-error\">".concat(wc_checkout_params.i18n_checkout_error, "</div>"));
+              _this.handleError("".concat(wc_checkout_params.i18n_checkout_error));
               // eslint-disable-next-line no-console
               console.error('Payment initialization failed:', _context.t0);
-            case 12:
+            case 13:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[0, 8]]);
+        }, _callee, null, [[0, 9]]);
       }))();
     },
     init: function init() {
       var _this2 = this;
       $(function () {
         _this2.showLoadingState();
-        _this2.paymentMethod = $('input[name="payment_method"]:checked', _this2.checkoutForm).val();
-        _this2.paymentType = $('input[name="lemonway_payment_type"]:checked', _this2.checkoutForm).val() || 'card';
-        $(document.body).on('updated_checkout', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-          return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-            while (1) switch (_context2.prev = _context2.next) {
-              case 0:
-                _context2.next = 2;
-                return _this2.initialize();
-              case 2:
-                setTimeout(function () {
-                  _this2.hideLoadingState();
-                }, 1000);
-              case 3:
-              case "end":
-                return _context2.stop();
-            }
-          }, _callee2);
-        })));
+        _this2.selectPaymentMethod();
+
+        // Initialize immediately and on updates
+        var doInitialize = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+            return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+              while (1) switch (_context2.prev = _context2.next) {
+                case 0:
+                  _context2.next = 2;
+                  return _this2.initialize();
+                case 2:
+                  setTimeout(function () {
+                    _this2.hideLoadingState();
+                  }, 1000);
+                case 3:
+                case "end":
+                  return _context2.stop();
+              }
+            }, _callee2);
+          }));
+          return function doInitialize() {
+            return _ref.apply(this, arguments);
+          };
+        }();
+        $(document.body).on('updated_checkout', doInitialize);
+        doInitialize(); // Initial call
       });
+    },
+    clear: function clear() {
+      // Cleanup existing instances
+      if (this.isCardInitialized) {
+        // Clean up hosted fields manually if needed
+        $('#lemonway-card-holder-name').empty();
+        $('#lemonway-card-number').empty();
+        $('#lemonway-card-expiration-date').empty();
+        $('#lemonway-card-cvv').empty();
+        this.hostedFields = null;
+        this.isCardInitialized = null;
+      }
+      if (this.isPaypalInitialized) {
+        $(this.paypalContainerSelector).empty();
+        this.isPaypalInitialized = false;
+      }
     },
     /**
      * Show loading state on checkout form.
      */
     showLoadingState: function showLoadingState() {
+      var removeError = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
       $(this.loading).addClass('processing').block({
         message: null,
         overlayCSS: {
@@ -119,6 +145,10 @@ jQuery(function ($) {
           opacity: 0.6
         }
       });
+      if (removeError) {
+        // Safely remove existing notices.
+        $('.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .is-error, .is-success').remove();
+      }
     },
     /**
      * Hide loading state on checkout form.
@@ -147,11 +177,20 @@ jQuery(function ($) {
       }
 
       // Safely remove existing notices.
-      $('.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message').remove();
+      $('.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message, .is-error, .is-success').remove();
 
       // Safely add new error message.
       if ($(this.checkoutForm).length) {
-        $(this.checkoutForm).prepend("<div class=\"woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout\">".concat(message, "</div>"));
+        var content = message;
+
+        // Create a temporary wrapper to parse the message as HTML
+        var temp = $('<div>').html(message);
+
+        // Check for woocommerce-error class
+        if (temp.find('.woocommerce-error').length === 0 && !temp.is('.woocommerce-error')) {
+          content = "<div class=\"woocommerce-error\">".concat(message, "</div>");
+        }
+        $(this.checkoutForm).prepend("\n\t\t\t\t\t<div class=\"woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout\">\n\t\t\t\t\t\t".concat(content, "\n\t\t\t\t\t</div>\n\t\t\t\t"));
 
         // Trigger validation.
         $(this.checkoutForm).find('.input-text, select, input:checkbox').trigger('validate').trigger('blur');
@@ -210,25 +249,54 @@ jQuery(function ($) {
       return this.paymentMethod === 'lemonway-gateway';
     },
     /**
+     * Select payment method and type
+     */
+    selectPaymentMethod: function selectPaymentMethod() {
+      this.paymentType = $(this.checkoutForm).find('input[name="lemonway_payment_type"]:checked').val() || '';
+      this.paymentMethod = $(this.checkoutForm).find('input[name="payment_method"]:checked').val();
+      this.updatePaymentUI();
+    },
+    /**
      * Setup listeners for payment method changes
      */
     setupPaymentMethodListeners: function setupPaymentMethodListeners() {
       var _this3 = this;
       $(this.checkoutForm).on('change', 'input[name="payment_method"], input[name="lemonway_payment_type"]', function () {
-        _this3.paymentType = $(_this3.checkoutForm).find('input[name="lemonway_payment_type"]:checked').val() || 'card';
-        _this3.paymentMethod = $(_this3.checkoutForm).find('input[name="payment_method"]:checked').val();
-        _this3.updatePaymentUI();
+        _this3.selectPaymentMethod();
       });
+
+      // Add country change listener
+      $(this.checkoutForm).on('change', 'select#billing_country', function () {
+        //this.handleCountryChange();
+      });
+    },
+    handleCountryChange: function handleCountryChange() {
+      var _this4 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+          while (1) switch (_context3.prev = _context3.next) {
+            case 0:
+              _this4.showLoadingState();
+              _context3.next = 3;
+              return _this4.initialize();
+            case 3:
+              _this4.hideLoadingState();
+            case 4:
+            case "end":
+              return _context3.stop();
+          }
+        }, _callee3);
+      }))();
     },
     /**
      * Initialize Lemonway Hosted Fields for card payments
      */
     initializeCardFields: function initializeCardFields() {
-      var _this4 = this;
+      var _this5 = this;
       return new Promise(function (resolve) {
         var checkCardFieldsReady = function checkCardFieldsReady() {
           if (window.LwHostedFields && typeof window.LwHostedFields.findLabelFor === 'function') {
-            _this4.isCardInitialized = true;
+            _this5.isCardInitialized = true;
             var style = "\n                            #text { color: black; }\n                            #text.invalid { color: red; }\n                            #text.valid { font-weight: bolder; }\n                        ";
             var config = {
               server: {
@@ -236,37 +304,38 @@ jQuery(function ($) {
               },
               client: {
                 holderName: {
-                  containerId: 'holder-name',
-                  placeHolder: 'Cardholder Name',
+                  containerId: 'lemonway-card-holder-name',
+                  placeHolder: 'Hans Müller',
                   style: style
                 },
                 cardNumber: {
-                  containerId: 'card-number',
+                  containerId: 'lemonway-card-number',
                   placeHolder: '4111 1111 1111 1111',
                   style: style
                 },
                 expirationDate: {
-                  containerId: 'expiration-date',
+                  containerId: 'lemonway-card-expiration-date',
                   placeHolder: 'MM/YY',
                   style: style
                 },
                 cvv: {
-                  containerId: 'cvv',
+                  containerId: 'lemonway-card-cvv',
                   placeHolder: '123',
                   style: style
                 }
               }
             };
-            _this4.hostedFields = new LwHostedFields(config);
-            _this4.hostedFields.mount();
+            _this5.hostedFields = new LwHostedFields(config);
+            _this5.hostedFields.mount();
 
             // Handle card form submission
-            $(document).on('click', 'form #place_order', function (e) {
-              if (_this4.paymentType !== 'card' || !_this4.isLemonwaySelected()) {
+            $(document).on('click', _this5.checkoutFormButton, function (e) {
+              _this5.selectPaymentMethod();
+              if (_this5.paymentType !== 'card' || !_this5.isLemonwaySelected()) {
                 return;
               }
               e.preventDefault();
-              _this4.processCardPayment();
+              _this5.processCardPayment();
             });
             resolve();
           } else {
@@ -280,44 +349,44 @@ jQuery(function ($) {
      * Process card payment when place order clicked
      */
     processCardPayment: function processCardPayment() {
-      var _this5 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+      var _this6 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
         var response, result;
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              if (!_this5.isProcessing) {
-                _context3.next = 2;
+              if (!_this6.isProcessing) {
+                _context4.next = 2;
                 break;
               }
-              return _context3.abrupt("return");
+              return _context4.abrupt("return");
             case 2:
-              _this5.isProcessing = true;
-              _this5.showLoadingState();
-              _context3.prev = 4;
-              _context3.next = 7;
-              return _this5.submitOrderRequest();
+              _this6.isProcessing = true;
+              _this6.showLoadingState(true);
+              _context4.prev = 4;
+              _context4.next = 7;
+              return _this6.submitOrderRequest();
             case 7:
-              response = _context3.sent;
-              result = _this5.processPaymentResponse(response);
+              response = _context4.sent;
+              result = _this6.processPaymentResponse(response);
               if (!(result && result.token)) {
-                _context3.next = 12;
+                _context4.next = 12;
                 break;
               }
-              _context3.next = 12;
-              return _this5.submitCardPayment(result.token);
+              _context4.next = 12;
+              return _this6.submitCardPayment(result.token);
             case 12:
-              _context3.next = 17;
+              _context4.next = 17;
               break;
             case 14:
-              _context3.prev = 14;
-              _context3.t0 = _context3["catch"](4);
-              _this5.handleError("<div class=\"woocommerce-error\">".concat(_context3.t0.message || wc_checkout_params.i18n_checkout_error, "</div>"));
+              _context4.prev = 14;
+              _context4.t0 = _context4["catch"](4);
+              _this6.handleError("".concat(_context4.t0.message || wc_checkout_params.i18n_checkout_error));
             case 17:
             case "end":
-              return _context3.stop();
+              return _context4.stop();
           }
-        }, _callee3, null, [[4, 14]]);
+        }, _callee4, null, [[4, 14]]);
       }))();
     },
     /**
@@ -326,57 +395,63 @@ jQuery(function ($) {
      * @param {string} token - Payment token from order creation
      */
     submitCardPayment: function submitCardPayment(token) {
-      var _this6 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
+      var _this7 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
             case 0:
-              _context4.prev = 0;
-              _this6.hostedFields.config.webkitToken = token;
-              _context4.next = 4;
-              return _this6.hostedFields.submit(true);
-            case 4:
-              // Payment succeeded - redirect to success page
-              if (_this6.orderSuccessRedirectUrl) {
-                window.location.href = _this6.orderSuccessRedirectUrl;
+              _context5.prev = 0;
+              if (_this7.hostedFields) {
+                _context5.next = 3;
+                break;
               }
-              _context4.next = 10;
+              throw new Error('Hosted fields not initialized');
+            case 3:
+              _this7.hostedFields.config.webkitToken = token;
+              _context5.next = 6;
+              return _this7.hostedFields.submit(true);
+            case 6:
+              // Payment succeeded - redirect to success page
+              if (_this7.orderSuccessRedirectUrl) {
+                window.location.href = _this7.orderSuccessRedirectUrl;
+              }
+              _context5.next = 12;
               break;
-            case 7:
-              _context4.prev = 7;
-              _context4.t0 = _context4["catch"](0);
-              throw new Error("Card payment failed: ".concat(_context4.t0.message));
-            case 10:
+            case 9:
+              _context5.prev = 9;
+              _context5.t0 = _context5["catch"](0);
+              throw new Error("Card payment failed: ".concat(_context5.t0.message));
+            case 12:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
-        }, _callee4, null, [[0, 7]]);
+        }, _callee5, null, [[0, 9]]);
       }))();
     },
     /**
      * Initialize PayPal Smart Button
      */
     initializePaypalButton: function initializePaypalButton() {
-      var _this7 = this;
+      var _this8 = this;
       return new Promise(function (resolve) {
         var checkPaypalReady = function checkPaypalReady() {
           if (window.paypal && window.paypal.Buttons) {
-            _this7.isPaypalInitialized = true;
+            _this8.isPaypalInitialized = true;
             window.paypal.Buttons({
               createOrder: function createOrder() {
-                return _this7.createPaypalOrder();
+                return _this8.createPaypalOrder();
               },
               onApprove: function onApprove(data, actions) {
-                return _this7.approvePaypalPayment(actions);
+                return _this8.approvePaypalPayment(actions);
               },
               onCancel: function onCancel() {
-                return _this7.cancelPaypalPayment();
+                return _this8.cancelPaypalPayment();
               },
               onError: function onError(error) {
-                return _this7.handlePaypalError(error);
+                return _this8.handlePaypalError(error);
               },
               fundingSource: window.paypal.FUNDING.PAYPAL
-            }).render(_this7.paypalContainerSelector).catch(function (error) {
+            }).render(_this8.paypalContainerSelector).catch(function (error) {
               // eslint-disable-next-line no-console
               console.error('PayPal button render failed:', error);
             });
@@ -392,36 +467,35 @@ jQuery(function ($) {
      * Create PayPal order when button clicked
      */
     createPaypalOrder: function createPaypalOrder() {
-      var _this8 = this;
-      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+      var _this9 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
         var response;
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) switch (_context5.prev = _context5.next) {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) switch (_context6.prev = _context6.next) {
             case 0:
-              if (_this8.isLemonwaySelected()) {
-                _context5.next = 2;
+              if (_this9.isLemonwaySelected()) {
+                _context6.next = 2;
                 break;
               }
               throw new Error('Lemonway payment method not selected');
             case 2:
-              _this8.showLoadingState();
-              $('.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message').remove();
-              _context5.prev = 4;
-              _context5.next = 7;
-              return _this8.submitOrderRequest();
-            case 7:
-              response = _context5.sent;
-              return _context5.abrupt("return", _this8.processPaymentResponse(response));
-            case 11:
-              _context5.prev = 11;
-              _context5.t0 = _context5["catch"](4);
-              _this8.handleError("<div class=\"woocommerce-error\">".concat(_context5.t0.message, "</div>"));
-              throw _context5.t0;
-            case 15:
+              _this9.showLoadingState(true);
+              _context6.prev = 3;
+              _context6.next = 6;
+              return _this9.submitOrderRequest();
+            case 6:
+              response = _context6.sent;
+              return _context6.abrupt("return", _this9.processPaymentResponse(response));
+            case 10:
+              _context6.prev = 10;
+              _context6.t0 = _context6["catch"](3);
+              _this9.handleError("".concat(_context6.t0.message));
+              throw _context6.t0;
+            case 14:
             case "end":
-              return _context5.stop();
+              return _context6.stop();
           }
-        }, _callee5, null, [[4, 11]]);
+        }, _callee6, null, [[3, 10]]);
       }))();
     },
     /**
@@ -430,10 +504,10 @@ jQuery(function ($) {
      * @param {Object} actions - The PayPal actions object used to capture payment.
      */
     approvePaypalPayment: function approvePaypalPayment(actions) {
-      var _this9 = this;
+      var _this10 = this;
       return new Promise(function (resolve) {
-        _this9.capturePayment(_this9.currentOrderId, _this9.orderSuccessRedirectUrl, actions).then(resolve).catch(function (error) {
-          _this9.handleError("<div class=\"woocommerce-error\">".concat(error.message, "</div>"));
+        _this10.capturePayment(_this10.currentOrderId, _this10.orderSuccessRedirectUrl, actions).then(resolve).catch(function (error) {
+          _this10.handleError("".concat(error.message));
           resolve();
         });
       });
@@ -442,8 +516,8 @@ jQuery(function ($) {
      * Handle canceled PayPal payment
      */
     cancelPaypalPayment: function cancelPaypalPayment() {
+      this.handleError(" ".concat(__('Your payment has been cancelled. Please try again or contact support if the issue persists.', 'lemonway')));
       this.hideLoadingState();
-      this.handleError("<div class=\"woocommerce-error\">".concat(__('Your payment has been cancelled. Please try again or contact support if the issue persists.', 'lemonway'), "</div>"));
       this.resetOrderData();
     },
     /**
@@ -453,7 +527,7 @@ jQuery(function ($) {
      */
     handlePaypalError: function handlePaypalError(error) {
       if (!$('.woocommerce-error').length) {
-        this.handleError("<div class=\"woocommerce-error\">".concat(error.toString(), "</div>"));
+        this.handleError("".concat(error.toString()));
       }
       this.hideLoadingState();
       this.resetOrderData();
@@ -462,6 +536,7 @@ jQuery(function ($) {
      * Submit order to WooCommerce
      */
     submitOrderRequest: function submitOrderRequest() {
+      var _this11 = this;
       var isPayPage = lemonway_payment.is_checkout_pay_page;
       var requestData = isPayPage ? {
         order_id: lemonway_payment.order_id,
@@ -474,10 +549,13 @@ jQuery(function ($) {
         url: isPayPage ? lemonway_payment.ajaxurl : wc_checkout_params.checkout_url,
         data: requestData,
         dataType: 'json'
+      }).fail(function (response, status, error) {
+        _this11.hideLoadingState();
+        _this11.handleError("".concat(error));
       });
     },
     /**
-     * Process payment response from server
+     * Process payment response from server.
      *
      * @param {Object} response - AJAX response from server
      */
@@ -505,7 +583,8 @@ jQuery(function ($) {
             return response.paypal_order_id;
           default:
             // eslint-disable-next-line no-console
-            console.warn('Unknown payment type:', response.payment_type);
+            console.warn('Unknown payment type:', response);
+            this.handleError("".concat(__('Unknown payment type. Please try again or contact support if the issue persists.', 'lemonway')));
             return null;
         }
       }
@@ -520,7 +599,7 @@ jQuery(function ($) {
       throw new Error(response.messages || ((_response$data2 = response.data) === null || _response$data2 === void 0 ? void 0 : _response$data2.message) || wc_checkout_params.i18n_checkout_error);
     },
     /**
-     * Capture payment for PayPal orders
+     * Capture payment for PayPal orders.
      *
      * @param {string} orderId - The ID of the order being processed.
      *  @param {string} successUrl - The URL to redirect to after a successful payment.
