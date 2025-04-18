@@ -352,9 +352,12 @@ class Handler {
 			);
 		}
 
-		$existing_history = (array) $order->get_meta( 'lemonway_payment_transactions_details' );
-		$existing_history[] = $transaction_details;
-		$order->update_meta_data( 'lemonway_payment_transactions_details', $existing_history );
+		$existing_history = $order->get_meta( 'lemonway_payment_transactions_details' );
+		$existing_history = is_array( $existing_history ) ? $existing_history : [];
+		if ( ! empty( $transaction_details ) && is_array( $transaction_details ) ) {
+			$existing_history[] = $transaction_details;
+			$order->update_meta_data( 'lemonway_payment_transactions_details', $existing_history );
+		}
 
 
 		$transaction_amount = intval( $transaction_details['transactions']['value'][0]['creditAmount'] ) === Helper::toCents( $order->get_total() );
@@ -391,11 +394,12 @@ class Handler {
 				$tmp_order->update_status( 'on-hold' );
 			}
 
-			$tmp_order->update_meta_data( 'lemonway_transaction_payment_status', $status );
-			$tmp_order->update_meta_data( 'lemonway_transaction_lemonway_payment_status', trim( $tmp_order->get_meta( 'lemonway_transaction_lemonway_payment_status', true ) . ', ' . sanitize_text_field( $transaction_status ), ', ' ) );
-
 			$tmp_order->save();
 		}
+
+		$order->update_meta_data( 'lemonway_transaction_payment_status', $status );
+		$order->update_meta_data( 'lemonway_transaction_lemonway_payment_status', trim( $order->get_meta( 'lemonway_transaction_lemonway_payment_status', true ) . ', ' . sanitize_text_field( $transaction_status ), ', ' ) );
+		$order->save();
 
 		$log_message = sprintf(
 			'Order ID: %s, Transaction ID: %s, Message: %s, API Response: %s',

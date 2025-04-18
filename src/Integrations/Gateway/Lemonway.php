@@ -207,10 +207,11 @@ class Lemonway extends WC_Payment_Gateway {
 			);
 		}
 
-		update_post_meta( $order_id, 'lemonway_payment_return_data', $process_result );
-		update_post_meta( $order_id, Helper::getOrderTransactionIdKey(), $process_result['id'] );
-		update_post_meta( $order_id, 'lemonway_payment_type', $payment_type );
-		update_post_meta( $order_id, 'lemonway_payment_mode', Helper::getPaymentMode() );
+		$order->update_meta_data( 'lemonway_payment_return_data', $process_result );
+		$order->update_meta_data( Helper::getOrderTransactionIdKey(), $process_result['id'] );
+		$order->update_meta_data( 'lemonway_payment_type', $payment_type );
+		$order->update_meta_data( 'lemonway_payment_mode', Helper::getPaymentMode() );
+		$order->save();
 
 		$return = array(
 			'result'                  => 'success',
