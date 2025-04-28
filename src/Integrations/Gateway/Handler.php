@@ -137,11 +137,10 @@ class Handler {
 			! $order ||
 			$order_id === 0 ||
 			$order->get_order_key() !== sanitize_text_field( wp_unslash( $_GET['key'] ) ) ||
-			$order->has_status( [ 'completed', 'processing' ] ) ||
+			$order->has_status( array( 'completed', 'processing' ) ) ||
 			Helper::getGatewayId() !== $order->get_payment_method() ) {
 			return;
 		}
-
 
 		if (
 			isset( $_GET['lemonway-payment'], $_GET['payment'] ) &&
@@ -288,7 +287,7 @@ class Handler {
 
 			$result = $this->lemonwayPaymentHandle( $order );
 		} catch ( \Exception $e ) {
-			$result =  array(
+			$result = array(
 				'type'    => 'lemonway_capture_payment',
 				'status'  => 'failed',
 				'message' => $e->getMessage(),
@@ -304,16 +303,16 @@ class Handler {
 	public function lemonwayPaymentHandle( $order ) {
 
 		$lemonway_transaction_id = Helper::getOrderTransactionID( $order );
-		$lemonway_payment_type = $order->get_meta( 'lemonway_payment_type' );
+		$lemonway_payment_type   = $order->get_meta( 'lemonway_payment_type' );
 
-		$status = 'cancelled';
+		$status  = 'cancelled';
 		$message = esc_html__( 'Payment has been unsuccessful!', 'lemonway' );
 
 		if ( $lemonway_payment_type === 'paypal' ) :
 			$processor = $this->payment->paypalResume( $lemonway_transaction_id );
 			if ( is_wp_error( $processor ) ) {
 
-				$message = $this->payment->errorMessage( $processor->get_error_message() );
+				$message     = $this->payment->errorMessage( $processor->get_error_message() );
 				$log_message = sprintf(
 					'Order ID: %s, Transaction ID: %s, Message: %s, API Response: %s',
 					absint( $order->get_id() ),
@@ -334,7 +333,7 @@ class Handler {
 
 		$transaction_details = $this->transaction->retrieve( $lemonway_transaction_id );
 		if ( is_wp_error( $transaction_details ) ) {
-			$message = $this->payment->errorMessage( $transaction_details->get_error_message() );
+			$message     = $this->payment->errorMessage( $transaction_details->get_error_message() );
 			$log_message = sprintf(
 				'Order ID: %s, Transaction ID: %s, Message: %s, API Response: %s',
 				absint( $order->get_id() ),
@@ -353,29 +352,28 @@ class Handler {
 		}
 
 		$existing_history = $order->get_meta( 'lemonway_payment_transactions_details' );
-		$existing_history = is_array( $existing_history ) ? $existing_history : [];
+		$existing_history = is_array( $existing_history ) ? $existing_history : array();
 		if ( ! empty( $transaction_details ) && is_array( $transaction_details ) ) {
 			$existing_history[] = $transaction_details;
 			$order->update_meta_data( 'lemonway_payment_transactions_details', $existing_history );
 		}
 
-
 		$transaction_amount = intval( $transaction_details['transactions']['value'][0]['creditAmount'] ) === Helper::toCents( $order->get_total() );
 		$transaction_status = $transaction_details['transactions']['value'][0]['status'];
-		$transaction_id = $transaction_details['transactions']['value'][0]['id'];
+		$transaction_id     = $transaction_details['transactions']['value'][0]['id'];
 
-		if( $transaction_amount ) {
+		if ( $transaction_amount ) {
 			if ( $transaction_status === 0 ) {
-				$status = 'completed';
+				$status  = 'completed';
 				$message = esc_html__( 'Payment has been unsuccessful!', 'lemonway' );
 				$order->payment_complete();
 
-				// Schedule event to check payment status later (e.g., in 2 minutes)
+				// Schedule event to check payment status later (e.g., in 2 minutes).
 				if ( ! wp_next_scheduled( 'lemonway_payment_p2p_transaction', array( $order->get_id() ) ) ) {
 					wp_schedule_single_event( time() + 10, 'lemonway_payment_p2p_transaction', array( $order->get_id() ) );
 				}
-			} else if ( $transaction_status === 4 ) {
-				$status = 'pending';
+			} elseif ( $transaction_status === 4 ) {
+				$status  = 'pending';
 				$message = esc_html__( 'Payment has been pending!', 'lemonway' );
 			}
 		}
@@ -385,7 +383,7 @@ class Handler {
 			$tmp_order->add_order_note(
 				sprintf(
 				/* translators: %s: Transaction ID */
-					esc_html__( 'Lemonway payment transaction id %s. Payment Status: %s', 'lemonway' ),
+					esc_html__( 'Lemonway payment transaction id %1$s. Payment Status: %2$s', 'lemonway' ),
 					$transaction_id,
 					$status
 				)
@@ -440,9 +438,9 @@ class Handler {
 		*/
 
 		$order_id = ( isset( $_POST['order_id'] ) ) ? sanitize_key( wp_unslash( $_POST['order_id'] ) ) : 0;
-		$result = array();
+		$result   = array();
 		if ( ! $order_id ) {
-			$result =  array(
+			$result = array(
 				'type'    => 'no_order_id',
 				'status'  => 'failed',
 				'message' => esc_html__( 'Order id not found.', 'lemonway' ),
@@ -451,7 +449,7 @@ class Handler {
 
 		$order = wc_get_order( $order_id );
 		if ( ! $order ) {
-			$result =  array(
+			$result = array(
 				'type'    => 'no_order',
 				'status'  => 'failed',
 				'message' => esc_html__( 'Order not found.', 'lemonway' ),
@@ -460,7 +458,7 @@ class Handler {
 
 		$transaction_id = $order->get_meta( Helper::getOrderTransactionIdKey() );
 		if ( ! $transaction_id ) {
-			$result =  array(
+			$result = array(
 				'type'    => 'no_lemonway_transaction_id',
 				'status'  => 'failed',
 				'message' => esc_html__( 'Lemonway transaction id not found.', 'lemonway' ),

@@ -16,11 +16,11 @@ use Lemonway\Integrations\Dokan\Dokan;
 use Lemonway\Integrations\Gateway\Helper;
 
 
-$lemonway_dokan = new Dokan();
-$lemonway_account_id = Helper::getMerchantId();
-$linked_banks = $lemonway_dokan->iban->retrieve( $lemonway_account_id );
+$lemonway_dokan        = new Dokan();
+$lemonway_account_id   = Helper::getMerchantId();
+$lemonway_linked_banks = $lemonway_dokan->iban->retrieve( $lemonway_account_id );
 
-if ( is_wp_error( $linked_banks ) || ! $linked_banks ) {
+if ( is_wp_error( $lemonway_linked_banks ) || ! $lemonway_linked_banks ) {
 	return;
 }
 
@@ -29,12 +29,12 @@ if ( is_wp_error( $linked_banks ) || ! $linked_banks ) {
 <h2><?php esc_html_e( 'Linked IBAN Account', 'lemonway' ); ?></h2>
 <ul class="grid-list grid-list__iban">
 	<?php
-	foreach ( $linked_banks as $key => $value ) :
+	foreach ( $lemonway_linked_banks as $key => $value ) :
 		?>
 		<li>
 			<!--<div class="link-account-status">
-				<button class="link-account-deactivate" data-id="<?php /*echo $value['id'] */?>">
-					<?php /*esc_html_e( 'Deactivate', 'lemonway' ); */?>
+				<button class="link-account-deactivate" data-id="<?php /*echo $value['id'] */ ?>">
+					<?php /*esc_html_e( 'Deactivate', 'lemonway' ); */ ?>
 				</button>
 			</div>-->
 			<p><strong><?php esc_html_e( 'Id: ', 'lemonway' ); ?></strong> <?php echo esc_html( $value['id'] ); ?> </p>
@@ -50,7 +50,7 @@ if ( is_wp_error( $linked_banks ) || ! $linked_banks ) {
 				<strong><?php esc_html_e( 'Account Typ: ', 'lemonway' ); ?></strong> <?php echo esc_html( $lemonway_dokan->lemonway_api->ibanAccountType( $value['type'] ) ); ?>
 			</p>
 		</li>
-	<?php
+		<?php
 	endforeach;
 
 
@@ -64,7 +64,7 @@ if ( is_wp_error( $linked_banks ) || ! $linked_banks ) {
 		</div>
 		<div class="modal-footer">
 			<button id="lemonway-iban-deactivation"
-			        data-id=""><?php esc_html_e( 'Yes, Deactivate', 'lemonway' ); ?></button>
+					data-id=""><?php esc_html_e( 'Yes, Deactivate', 'lemonway' ); ?></button>
 			<button id="lemonway-modal-close"><?php esc_html_e( 'Cancel', 'lemonway' ); ?></button>
 		</div>
 	</div>

@@ -33,17 +33,16 @@ class Withdraw extends Dokan {
 	 */
 	public function init() {
 
-		add_filter( 'dokan_get_seller_balance', array($this, 'sellerBalance'), PHP_INT_MAX, 1 );
+		add_filter( 'dokan_get_seller_balance', array( $this, 'sellerBalance' ), PHP_INT_MAX, 1 );
 
-
-		//add_filter( 'dokan_get_formatted_seller_balance', array($this, 'sellerBalance'), PHP_INT_MAX, 1 );
+		// add_filter( 'dokan_get_formatted_seller_balance', array($this, 'sellerBalance'), PHP_INT_MAX, 1 );
 
 		add_filter( 'dokan_withdraw_is_valid_request', array( $this, 'processWithdraw' ), PHP_INT_MAX, 2 );
 		add_filter( 'dokan_withdraw_manual_request_enable', array( $this, 'validWithdraw' ), PHP_INT_MAX, 1 );
 		add_action( 'dokan_withdraw_content_after_balance', array( $this, 'lemonwayBalance' ) );
 	}
 
-	public function sellerBalance($earning) {
+	public function sellerBalance( $earning ) {
 		return floor( $earning * pow( 10, wc_get_price_decimals() ) ) / pow( 10, wc_get_price_decimals() );
 	}
 
@@ -72,7 +71,6 @@ class Withdraw extends Dokan {
 
 		$iban = $this->iban->retrieve( $merchant_id );
 
-
 		if ( is_wp_error( $iban ) ) {
 			esc_html_e( 'Please reload and try later.', 'lemonway' );
 
@@ -86,9 +84,8 @@ class Withdraw extends Dokan {
 			return false;
 		}
 
-
 		if ( array_filter( $iban, fn( $item ) => $item['status'] === 5 ) ) {
-			return $result; // Valid IBAN found, return result
+			return $result; // Valid IBAN found, return result.
 		}
 
 		printf(
@@ -120,7 +117,8 @@ class Withdraw extends Dokan {
 		$merchant_id = Helper::getMerchantId( $seller_id );
 
 		if ( ! $merchant_id ) {
-			$message =esc_html__( 'Withdrawal has been canceled. Reason: No Lemonway Merchant id is found',
+			$message     = esc_html__(
+				'Withdrawal has been canceled. Reason: No Lemonway Merchant id is found',
 				'lemonway'
 			);
 			$log_message = sprintf(
@@ -132,16 +130,15 @@ class Withdraw extends Dokan {
 
 			Helper::log( sprintf( $log_message, 'Withdraw', 'error' ) );
 
-
 			return new WP_Error( 'lemonway_dokan_rest_withdraw_error', wp_kses_post( $message ) );
 		}
 
 		$iban = $this->iban->retrieve( $merchant_id );
 
-
 		if ( is_wp_error( $iban ) ) {
 
-			$message =esc_html__( 'Withdrawal has been canceled. Reason: No Lemonway IBAN id is found.',
+			$message = esc_html__(
+				'Withdrawal has been canceled. Reason: No Lemonway IBAN id is found.',
 				'lemonway'
 			);
 
@@ -159,7 +156,8 @@ class Withdraw extends Dokan {
 
 		if ( $iban[0]['status'] !== 5 ) {
 
-			$message =esc_html__( 'Withdrawal has been canceled. Reason: IBAN has not been verified yet.',
+			$message = esc_html__(
+				'Withdrawal has been canceled. Reason: IBAN has not been verified yet.',
 				'lemonway'
 			);
 
@@ -189,7 +187,8 @@ class Withdraw extends Dokan {
 
 		if ( is_wp_error( $lemonway_withdraw ) ) {
 
-			$message =esc_html__( 'Withdrawal has been canceled.',
+			$message  = esc_html__(
+				'Withdrawal has been canceled.',
 				'lemonway'
 			);
 			$message .= ' Reason: ';
@@ -210,11 +209,12 @@ class Withdraw extends Dokan {
 
 		if ( ! empty( $lemonway_withdraw['id'] ) && 3 !== $lemonway_withdraw['status'] ) {
 
-			$message =esc_html__( 'Withdrawal has been canceled.',
+			$message  = esc_html__(
+				'Withdrawal has been canceled.',
 				'lemonway'
 			);
 			$message .= ' ';
-			$message .= esc_html__('Reason: ', 'lemonway');
+			$message .= esc_html__( 'Reason: ', 'lemonway' );
 			$message .= $lemonway_withdraw['error_message'];
 
 			$log_message = sprintf(
@@ -240,10 +240,9 @@ class Withdraw extends Dokan {
 			absint( $withdraw_amount ),
 			absint( $seller_id ),
 			$message,
-			wp_json_encode(  $lemonway_withdraw )
+			wp_json_encode( $lemonway_withdraw )
 		);
 		Helper::log( $log_message, 'Withdraw', 'info' );
-
 
 		// Get existing transaction history from order meta.
 		$existing_history = get_user_meta( $seller_id, 'lemonway_payment_withdraw_details', true );

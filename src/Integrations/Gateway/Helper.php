@@ -397,9 +397,9 @@ class Helper {
 
 		$logger  = wc_get_logger();
 		$context = array(
-			'source' => 'lemonway',
-			'backtrace'     => true,
-			'data'   => wp_json_encode( $message, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ),
+			'source'    => 'lemonway',
+			'backtrace' => true,
+			'data'      => wp_json_encode( $message, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ),
 		);
 
 		// Prepare the message.

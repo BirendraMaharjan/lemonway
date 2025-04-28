@@ -121,7 +121,7 @@ class Dokan {
 		add_filter( 'dokan_get_seller_active_withdraw_methods', array( $this, 'customMethodInActiveWithdrawMethod' ), 99, 2 );
 		add_filter( 'dokan_withdraw_withdrawable_payment_methods', array( $this, 'includeMethodInWithdrawMethodSection' ) );
 
-		// Remove payment nav form vendor dashboard
+		// Remove payment nav form vendor dashboard.
 		add_filter( 'dokan_get_dashboard_nav', array( $this, 'dokanNav' ) );
 	}
 
@@ -158,7 +158,7 @@ class Dokan {
 		$this->lemonway_refund  = new Refund();
 		$this->lemonway_payment = new Payment();
 		$this->iban             = new Iban();
-		$this->vendor_id     = dokan_get_current_user_id();
+		$this->vendor_id        = dokan_get_current_user_id();
 
 		$this->title = $this->plugin->title();
 		$this->slug  = $this->plugin->slug();
@@ -227,7 +227,7 @@ class Dokan {
 	 * @return string Modified heading title.
 	 */
 	public function paymentHeading( $heading, $slug ) {
-		if ( ! in_array( $slug, [ $this->slug, $this->slug . '-edit' ], true ) ) {
+		if ( ! in_array( $slug, array( $this->slug, $this->slug . '-edit' ), true ) ) {
 			return $heading;
 		}
 
@@ -314,7 +314,7 @@ class Dokan {
 	public function dokanWithdrawMethodCustom( $store_settings ) {
 		if ( dokan_is_seller_enabled( get_current_user_id() ) ) {
 			$this->setting_dokan->template( $store_settings );
-		}else{
+		} else {
 			dokan_seller_not_enabled_notice();
 		}
 	}

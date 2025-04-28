@@ -210,10 +210,10 @@ class Api {
 		}
 
 		$valid_methods = array( 'get', 'post', 'put', 'delete', 'patch' );
-		$method = strtolower( $parsed_args['method'] );
+		$method        = strtolower( $parsed_args['method'] );
 
 		$args['method'] = in_array( $method, $valid_methods, true ) ? strtoupper( $method ) : 'POST';
-		$response = wp_remote_request( esc_url_raw( $parsed_args['url'] ), $args );
+		$response       = wp_remote_request( esc_url_raw( $parsed_args['url'] ), $args );
 
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error( 'lemonway_request_error', $response->get_error_message() );
@@ -231,7 +231,7 @@ class Api {
 		}
 
 		if ( isset( $body['error'] ) ) {
-			return new WP_Error( 'lemonway_request_error', $this->errorMessage( $body['error']['message']  ) );
+			return new WP_Error( 'lemonway_request_error', $this->errorMessage( $body['error']['message'] ) );
 		}
 
 		$status_code = wp_remote_retrieve_response_code( $response );
@@ -324,7 +324,7 @@ class Api {
 			$error_data = $api_check->get_error_data();
 			$error      = is_null( $error_data ) ? array(
 				'code'    => 'API Error Response',
-				'message' => wp_json_encode( $this->errorMessage($api_check->get_error_message() ), JSON_PRETTY_PRINT ),
+				'message' => wp_json_encode( $this->errorMessage( $api_check->get_error_message() ), JSON_PRETTY_PRINT ),
 			) : $error_data;
 		} elseif ( ! empty( $api_check['error'] ) ) {
 			$error = array(
@@ -490,9 +490,9 @@ class Api {
 
 	public function errorMessage( $key = null ) {
 		$error_types = array(
-			'Forbidden' => esc_html__( 'Forbidden: Please try again.', 'lemonway' ),
-			'AMOUNT NOT ALLOWED' => esc_html__( 'Amount not allowed', 'lemonway' ),
-			'Incorrect URL address format ' => esc_html__( 'Invalid Website URL', 'lemonway' ),
+			'Forbidden'                               => esc_html__( 'Forbidden: Please try again.', 'lemonway' ),
+			'AMOUNT NOT ALLOWED'                      => esc_html__( 'Amount not allowed', 'lemonway' ),
+			'Incorrect URL address format '           => esc_html__( 'Invalid Website URL', 'lemonway' ),
 			'Amount higher than your account balance' => esc_html__( 'Amount higher than your account balance', 'lemonway' ),
 		);
 		if ( $key !== null && array_key_exists( (string) $key, $error_types ) ) {

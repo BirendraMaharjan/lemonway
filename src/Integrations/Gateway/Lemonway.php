@@ -190,7 +190,7 @@ class Lemonway extends WC_Payment_Gateway {
 			$process_result = true;
 		}
 
-		$order->update_status( 'pending', sprintf( /* translators: %s: Order ID */ __( 'Lemonway %s payment pending: Order #%s.', 'lemonway' ), esc_attr( $payment_type ), absint( $order_id ) ) );
+		$order->update_status( 'pending', sprintf( /* translators: %s: Order ID */ __( 'Lemonway %1$s payment pending: Order #%2$s.', 'lemonway' ), esc_attr( $payment_type ), absint( $order_id ) ) );
 
 		if ( is_wp_error( $process_result ) ) {
 			$error_message = sprintf(

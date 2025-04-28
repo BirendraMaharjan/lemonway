@@ -44,14 +44,14 @@ class Iban extends Api {
 		}
 
 		if ( empty( $response['ibans'][0]['id'] ) ) {
-			return new WP_Error( 'lemonway_iban_retrive_error', $this->errorMessage( esc_html__('IBAN not found.','lemonway') ), $response );
+			return new WP_Error( 'lemonway_iban_retrive_error', $this->errorMessage( esc_html__( 'IBAN not found.', 'lemonway' ) ), $response );
 		}
 
 		return $response['ibans'];
 	}
 
 	public function unregister( $iban_id, $account_id ) {
-		$url  = $this->makeUrl( $this->type . '/iban/' . $iban_id . '/unregister' );
+		$url = $this->makeUrl( $this->type . '/iban/' . $iban_id . '/unregister' );
 
 		$args = array(
 			'url'    => $url,
@@ -145,12 +145,12 @@ class Iban extends Api {
 		return $this->makeRequest( $args );
 	}
 
-	public function isLinkedIban( $merchantId = null ) {
+	public function isLinkedIban( $merchant_id = null ) {
 
-		if( empty( $merchantId ) ) {
-			$merchantId = Helper::getMerchantId();
+		if ( empty( $merchant_id ) ) {
+			$merchant_id = Helper::getMerchantId();
 		}
-		$iban = $this->retrieve( $merchantId );
+		$iban = $this->retrieve( $merchant_id );
 
 		if ( is_wp_error( $iban ) ) {
 			return false;
@@ -173,6 +173,5 @@ class Iban extends Api {
 		);
 
 		return $this->makeRequest( $args );
-
 	}
 }

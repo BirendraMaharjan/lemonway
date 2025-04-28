@@ -63,7 +63,7 @@ class Account extends Api {
 	public function getDetails( string $account_id, $key = null ) {
 		$url  = $this->makeUrl( $this->type . '/' . $account_id );
 		$args = array(
-			'url'  => $url,
+			'url'    => $url,
 			'method' => 'get',
 		);
 
@@ -117,49 +117,49 @@ class Account extends Api {
 	/**
 	 * Creates or updates a user account for a merchant.
 	 *
-	 * @param array $data User account details including email, name, address, birth info, and company details.
+	 * @param array    $data User account details including email, name, address, birth info, and company details.
 	 * @param int|null $merchant_id Merchant ID for updating an existing account (optional).
 	 *
 	 * @return mixed API response from the request.
 	 */
 	public function userAccount( array $data, $merchant_id = null ) {
-		$url = $this->makeUrl( $this->type . '/legal' );
+		$url    = $this->makeUrl( $this->type . '/legal' );
 		$method = 'post';
 
-		if ( $merchant_id ):
+		if ( $merchant_id ) :
 			$url    = $this->makeUrl( $this->type . '/legal/' . $merchant_id );
 			$method = 'put';
 		endif;
 
 		$args = array(
 			'method' => $method,
-			'url'  => $url,
-			'data'   => [
+			'url'    => $url,
+			'data'   => array(
 				'email'              => sanitize_email( $data['email'] ?? '' ),
 				'title'              => sanitize_text_field( $data['account_title'] ?? '' ),
 				'firstName'          => sanitize_text_field( $data['firstname'] ?? '' ),
 				'lastName'           => sanitize_text_field( $data['lastname'] ?? '' ),
-				'adresse'            => [
+				'adresse'            => array(
 					'country'  => sanitize_text_field( $data['country'] ?? '' ),
 					'postCode' => sanitize_text_field( $data['postal_code'] ?? '' ),
 					'city'     => sanitize_text_field( $data['city'] ?? '' ),
 					'street'   => sanitize_text_field( $data['address'] ?? '' ),
-				],
-				'birth'              => [
+				),
+				'birth'              => array(
 					'date'    => sanitize_text_field( $data['birth_date'] ?? '' ),
 					'city'    => sanitize_text_field( $data['birth_city'] ?? '' ),
 					'country' => sanitize_text_field( $data['birth_country'] ?? '' ),
-				],
+				),
 				'nationality'        => sanitize_text_field( $data['nationality'] ?? '' ),
 				'payerOrBeneficiary' => 2,
-				'company'            => [
+				'company'            => array(
 					'name'        => sanitize_text_field( $data['company_name'] ?? '' ),
 					'description' => sanitize_text_field( $data['company_description'] ?? '' ),
-				],
-			],
+				),
+			),
 		);
 
-		if ( ! $merchant_id ):
+		if ( ! $merchant_id ) :
 			$args['data']['accountId'] = $this->generateSellerUniqueAccountId( sanitize_text_field( $data['vendor_id'] ?? '' ) . '-user-' );
 		endif;
 

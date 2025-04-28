@@ -269,8 +269,7 @@ class VendorProfile extends Dokan {
 
 		$new_data['email']        = sanitize_email( $data['email'] );
 		$new_data['account_type'] = sanitize_text_field( $data['account_type'] );
-		$new_data['vendor_id'] = $vendor_id;
-
+		$new_data['vendor_id']    = $vendor_id;
 
 		foreach ( $this->setting_dokan->fields()['step2'] as $key => $value ) {
 			$message = empty( $value['error_message'] ) ? esc_html__( 'Invalid', 'lemonway' ) : $value['error_message'];
@@ -556,38 +555,34 @@ class VendorProfile extends Dokan {
 
 	public function DeactivateLinkBankAccount() {
 
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'lemonway-ajax-nonce' ) ) {
-			wp_send_json_error( array( 'message' => esc_html__('Nonce verification failed.', 'lemonway') ) );
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field ( wp_unslash( $_POST['nonce'] ) ), 'lemonway-ajax-nonce' ) ) {
+			wp_send_json_error( array( 'message' => esc_html__( 'Nonce verification failed.', 'lemonway' ) ) );
 
-			return; // Stop execution if nonce verification fails
+			return; // Stop execution if nonce verification fails.
 		}
 
 		if ( ! isset( $_POST['iban_id'] ) ) {
-			wp_send_json_error( array( 'message' => esc_html__('IBAN ID missing.', 'lemonway') ) );
+			wp_send_json_error( array( 'message' => esc_html__( 'IBAN ID missing.', 'lemonway' ) ) );
 		}
-
-
 
 		$vendor_id = $this->vendor_id;
 		if ( ! $this->vendor_id ) {
-			wp_send_json_error( array( 'message' => esc_html__('Vendor not found.', 'lemonway') ) );
+			wp_send_json_error( array( 'message' => esc_html__( 'Vendor not found.', 'lemonway' ) ) );
 		}
 
 		$merchant_id = Helper::getMerchantId( $vendor_id );
 		if ( ! $merchant_id ) {
-			wp_send_json_error( array( 'message' => esc_html__('Merchant not found.', 'lemonway') ) );
+			wp_send_json_error( array( 'message' => esc_html__( 'Merchant not found.', 'lemonway' ) ) );
 		}
 
-
-		$iban_id = $_POST['iban_id'];
+		$iban_id = sanitize_text_field( wp_unslash( $_POST['iban_id'] ) );
 
 		$account = $this->iban->unregister( $iban_id, $merchant_id );
 
 		if ( ! empty( $account['id'] ) ) {
 			wp_send_json_success( array( 'message' => esc_html__( 'IBAN has been deactivated.', 'lemonway' ) ) );
 		}
-		wp_send_json_error( array( 'message' => esc_html__('Merchant not found.', 'lemonway') ) );
-
+		wp_send_json_error( array( 'message' => esc_html__( 'Merchant not found.', 'lemonway' ) ) );
 	}
 
 	public function customUploadFolder( $dir_data ) {

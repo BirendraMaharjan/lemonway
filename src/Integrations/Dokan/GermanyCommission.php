@@ -11,7 +11,6 @@ declare( strict_types=1 );
 
 namespace Lemonway\Integrations\Dokan;
 
-
 use Lemonway\Config\Plugin;
 
 /**
@@ -39,11 +38,11 @@ class GermanyCommission {
 	 * @since 1.0.0
 	 */
 	public function init() {
-// Hook into the Dokan admin commission filter
-		add_filter( 'dokan_get_earning_by_order', [ $this, 'get_dokan_admin_commission_with_vat' ], 20, 3 );
+		// Hook into the Dokan admin commission filter.
+		add_filter( 'dokan_get_earning_by_order', array( $this, 'get_dokan_admin_commission_with_vat' ), 20, 2 );
 
-		// Hook into the template loading process to override the commission-meta-box-html
-		add_filter( 'dokan_get_template_part', [ $this, 'overrideDokanAdminCommissionTemplates' ], 10, 3 );
+		// Hook into the template loading process to override the commission-meta-box-html.
+		add_filter( 'dokan_get_template_part', array( $this, 'overrideDokanAdminCommissionTemplates' ), 10, 2 );
 	}
 
 	/**
@@ -57,14 +56,13 @@ class GermanyCommission {
 	/**
 	 * Calculate admin commission with VAT for German vendors.
 	 *
-	 * @param float $earning_or_commission Original commission value.
+	 * @param float    $earning_or_commission Original commission value.
 	 * @param WC_Order $order The WooCommerce order.
-	 * @param string $context The context for calculating commission.
 	 *
 	 * @return float Adjusted earning or commission.
 	 */
-	public function get_dokan_admin_commission_with_vat( $earning_or_commission, $order, $context ) {
-		// Get the vendor ID
+	public function get_dokan_admin_commission_with_vat( $earning_or_commission, $order ) {
+		// Get the vendor ID.
 		$seller_id = dokan_get_seller_id_by_order( $order );
 		if ( ! $seller_id ) {
 			return $earning_or_commission;
@@ -73,28 +71,28 @@ class GermanyCommission {
 		$vendor     = dokan()->vendor->get( $seller_id );
 		$store_info = $vendor->get_shop_info();
 
-		// Get full order total (excluding refunds)
+		// Get full order total (excluding refunds).
 		$order_total = (float) $order->get_total();
 
-		// Calculate admin commission before VAT
+		// Calculate admin commission before VAT.
 		$admin_commission = $order_total - $earning_or_commission;
 
-		// Apply 19% commission of admin commission if the store is in Germany
+		// Apply 19% commission of admin commission if the store is in Germany.
 		if ( isset( $store_info['address']['country'] ) && $store_info['address']['country'] === 'DE' ) {
 
 			$german_commission = $admin_commission * 0.19;
-			$total_commission = $admin_commission + $german_commission;
+			$total_commission  = $admin_commission + $german_commission;
 
-			// Final earning = order total - (admin commission + 19 % german commission of admin commission)
+			// Final earning = order total - (admin commission + 19 % german commission of admin commission).
 			$earning_or_commission = $order_total - $total_commission;
 
 			$german_commission_data = array(
-				'commission' => $admin_commission,
+				'commission'         => $admin_commission,
 				'germany_commission' => $german_commission,
-				'total_commission' => $total_commission
+				'total_commission'   => $total_commission,
 			);
 
-			// Update order meta-data with German vendor commission
+			// Update order meta-data with German vendor commission.
 			$order->update_meta_data( '_german_vendor_commission', $german_commission_data );
 			$order->save();
 		}
@@ -106,26 +104,23 @@ class GermanyCommission {
 	 * Override the Dokan template to load the custom commission meta box HTML.
 	 *
 	 * @param string $template The original template file path.
-	 * @param string $template_name The name of the template.
-	 * @param string $template_path The path of the template.
+	 * @param string $slug The name of the template.
 	 *
 	 * @return string The custom template file path if overridden.
 	 */
-	public function overrideDokanAdminCommissionTemplates( $template, $slug, $args ) {
+	public function overrideDokanAdminCommissionTemplates( $template, $slug ) {
 		if ( 'orders/commission-meta-box-html' !== $slug ) {
 			return $template;
 		}
 
-		// Debug the custom template path
+		// Debug the custom template path.
 		$custom_template = $this->plugin->templatePath() . '/dokan/templates/orders/commission-meta-box-html.php';
 
-
-		// Check if the custom template exists
+		// Check if the custom template exists.
 		if ( file_exists( $custom_template ) ) {
 			return $custom_template;
 		}
 
-		return $template; // Return the default template if not overridden
+		return $template; // Return the default template if not overridden.
 	}
-
 }

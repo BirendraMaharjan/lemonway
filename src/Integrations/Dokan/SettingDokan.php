@@ -82,8 +82,8 @@ class SettingDokan {
 	 * @return array The form fields.
 	 */
 	public function fields() {
-		$fields                 = array();
-		$fields['step1']        = array(
+		$fields          = array();
+		$fields['step1'] = array(
 			'email'           => array(
 				'name'          => 'settings[lemonway][email]',
 				'type'          => 'email',
@@ -103,7 +103,7 @@ class SettingDokan {
 				'class'         => 'dokan-form-group lemonway-hide',
 			),
 		);
-		$fields['step2']        = array(
+		$fields['step2'] = array(
 			'account_title'                 => array(
 				'name'          => 'settings[lemonway][account_title]',
 				'type'          => 'select',
@@ -238,7 +238,7 @@ class SettingDokan {
 				'error_message' => esc_html__( 'Invalid Country', 'lemonway' ),
 				'class'         => 'dokan-form-group',
 			),
-			'company_name'                 => array(
+			'company_name'                  => array(
 				'name'          => 'settings[lemonway][company_name]',
 				'type'          => 'text',
 				'label'         => esc_html__( 'Company Name', 'lemonway' ),
@@ -248,7 +248,7 @@ class SettingDokan {
 				'error_message' => esc_html__( 'Invalid Company name', 'lemonway' ),
 				'class'         => 'dokan-form-group',
 			),
-			'company_description'          => array(
+			'company_description'           => array(
 				'name'          => 'settings[lemonway][company_description]',
 				'type'          => 'text',
 				'label'         => esc_html__( 'Company Description', 'lemonway' ),
@@ -258,7 +258,7 @@ class SettingDokan {
 				'error_message' => esc_html__( 'Invalid Company Description', 'lemonway' ),
 				'class'         => 'dokan-form-group',
 			),
-			'company_websiteUrl'           => array(
+			'company_websiteUrl'            => array(
 				'name'          => 'settings[lemonway][company_websiteUrl]',
 				'type'          => 'text',
 				'label'         => esc_html__( 'Company Website URL', 'lemonway' ),
@@ -268,7 +268,7 @@ class SettingDokan {
 				'error_message' => esc_html__( 'Invalid Website URL', 'lemonway' ),
 				'class'         => 'dokan-form-group',
 			),
-			'company_identificationNumber' => array(
+			'company_identificationNumber'  => array(
 				'name'          => 'settings[lemonway][company_identificationNumber]',
 				'type'          => 'text',
 				'label'         => esc_html__( 'Company identification number', 'lemonway' ),

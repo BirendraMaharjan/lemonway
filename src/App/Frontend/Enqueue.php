@@ -61,7 +61,7 @@ class Enqueue extends Base {
 			array(
 				array(
 					'type'      => 'enqueue',
-					'deps'      => array('jquery', 'wp-i18n'),
+					'deps'      => array( 'jquery', 'wp-i18n' ),
 					'handle'    => 'lemonway-frontend-js',
 					'in_footer' => true,
 					'source'    => plugins_url( '/assets/public/js/frontend.js', LEMONWAY_PLUGIN_FILE ),
@@ -85,7 +85,7 @@ class Enqueue extends Base {
 				),
 				array(
 					'type'      => 'register',
-					'deps'      => array('jquery', 'wp-i18n'),
+					'deps'      => array( 'jquery', 'wp-i18n' ),
 					'handle'    => 'lemonway-payment-js',
 					'in_footer' => true,
 					'source'    => plugins_url( '/assets/public/js/payment.js', LEMONWAY_PLUGIN_FILE ),

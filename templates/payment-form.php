@@ -71,13 +71,13 @@
 	</div>
 	<!--<div class="lemonway-payment-method-item lemonway-payment-method-paypal">
 		<input type="radio" id="lemonway-payment-type-bank" name="lemonway_payment_type"
-		       class="lemonway-payment-type bank" value="paypal"/>
-		<label for="lemonway-payment-type-bank"><?php /*echo esc_html__( 'Pay by bank', 'lemonway' ); */?>
+				class="lemonway-payment-type bank" value="paypal"/>
+		<label for="lemonway-payment-type-bank"><?php /*echo esc_html__( 'Pay by bank', 'lemonway' ); */ ?>
 			<ul class="card-list">
 				<li>
 					<div
-						style="background: url('<?php /*echo esc_url( lemonway()->getData()['plugin_url'] . '/assets/public/svg/paypal-3-svgrepo-com.svg' ); */?>') no-repeat center / cover; width: 45px; height: 30px;"
-						title="<?php /*esc_html_e( 'Paypal', 'lemonway' ); */?>"></div>
+						style="background: url('<?php /*echo esc_url( lemonway()->getData()['plugin_url'] . '/assets/public/svg/paypal-3-svgrepo-com.svg' ); */ ?>') no-repeat center / cover; width: 45px; height: 30px;"
+						title="<?php /*esc_html_e( 'Paypal', 'lemonway' ); */ ?>"></div>
 				</li>
 			</ul>
 		</label>

@@ -39,7 +39,6 @@ class Refund extends Dokan {
 
 		add_action( 'dokan_refund_request_created', array( $this, 'processRefund' ) );
 		add_filter( 'dokan_refund_approve_vendor_refund_amount', array( $this, 'vendor_refund_amount' ), 100, 3 );
-		//add_filter( 'dokan_refund_approve_vendor_refund_amount', [ $this, 'vendor_refund_amount' ], 10, 3 );
 	}
 
 
@@ -51,9 +50,8 @@ class Refund extends Dokan {
 
 	public function vendor_refund_amount( $vendor_refund, $args, $refund ) {
 
-
-		$order = wc_get_order( $refund->get_order_id() );
-		$seller_id = $refund->get_seller_id();
+		$order       = wc_get_order( $refund->get_order_id() );
+		$seller_id   = $refund->get_seller_id();
 		$merchant_id = Helper::getMerchantId( $seller_id );
 
 		// p2p from vendor to technical account before refund.
@@ -79,7 +77,7 @@ class Refund extends Dokan {
 
 			$message  = esc_html__( 'Refund has been canceled.', 'lemonway' );
 			$message .= ' ';
-			$message .= esc_html__('Reason: ', 'lemonway');
+			$message .= esc_html__( 'Reason: ', 'lemonway' );
 			$message .= $this->lemonway_api->errorMessage( $payment_response->get_error_message() );
 
 			$log_message = sprintf(
@@ -100,7 +98,7 @@ class Refund extends Dokan {
 
 			$message  = esc_html__( 'Automatic refund is not possible for this order.', 'lemonway' );
 			$message .= ' ';
-			$message .= esc_html__('Reason: ', 'lemonway');
+			$message .= esc_html__( 'Reason: ', 'lemonway' );
 			$message .= $this->lemonway_api->errorMessage( $payment_response->get_error_message() );
 
 			$log_message = sprintf(
@@ -132,7 +130,7 @@ class Refund extends Dokan {
 			absint( $refund->get_order_id() ),
 			absint( $seller_id ),
 			wp_strip_all_tags( $message ),
-			wp_json_encode(  $payment_response )
+			wp_json_encode( $payment_response )
 		);
 		Helper::log( $log_message, 'Refund & settlement', 'info' );
 
@@ -142,7 +140,6 @@ class Refund extends Dokan {
 		$order->update_meta_data( 'lemonway_payment_refund_settlement_details', $payment_existing_history );
 		// p2p from vendor to technical account before refund.
 
-
 		return $vendor_refund;
 	}
 
@@ -151,7 +148,7 @@ class Refund extends Dokan {
 	 *
 	 * @since 3.5.0
 	 *
-	 * @param object $refund
+	 * @param object $refund refund.
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -200,7 +197,6 @@ class Refund extends Dokan {
 
 			return;
 		}
-
 
 		$parent_order = ! empty( $order->get_parent_id() ) ? wc_get_order( $order->get_parent_id() ) : $order;
 
@@ -254,19 +250,18 @@ class Refund extends Dokan {
 			return;
 		}
 
-		$balance     = $this->account->getDetails( $merchant_id, 'balance' );
+		$balance = $this->account->getDetails( $merchant_id, 'balance' );
 		$refund->set_refund_reason( '$message' )->cancel();
 
-		if( $balance < $refund->get_refund_amount() ) {
+		if ( $balance < $refund->get_refund_amount() ) {
 
-			$message = esc_html__( 'Refund has been canceled.', 'lemonway' );
+			$message  = esc_html__( 'Refund has been canceled.', 'lemonway' );
 			$message .= ' ';
 			$message .= esc_html__( 'Reason: ', 'lemonway' );
 			$message .= sprintf( __( 'Amount is more than your Lemonway account balance (Lemonway balance: %s).', 'lemonway' ), html_entity_decode( strip_tags( wc_price( floatval( $balance / 100 ) ) ) ) );
 
-
 			$log_message = sprintf(
-				'Refund ID: %s, Order ID: %s, Vendor ID: %s, Message: %s, API Response: %s',
+				__( 'Refund ID: %1$s, Order ID: %2$s, Vendor ID: %3$s, Message: %4$s, API Response: %5$s', 'lemonway' ),
 				absint( $refund->get_id() ),
 				absint( $refund->get_order_id() ),
 				absint( $seller_id ),
@@ -281,7 +276,6 @@ class Refund extends Dokan {
 			throw new DokanException( 'dokan_rest_refund_error', wp_kses_post( $message ), 400 );
 
 		}
-
 
 		// Refund to customer.
 		$data = array(
@@ -303,7 +297,7 @@ class Refund extends Dokan {
 
 			$message  = esc_html__( 'Refund has been canceled.', 'lemonway' );
 			$message .= ' ';
-			$message .= esc_html__('Reason: ', 'lemonway');
+			$message .= esc_html__( 'Reason: ', 'lemonway' );
 			$message .= $this->lemonway_api->errorMessage( $lemonway_refund->get_error_message() );
 
 			$log_message = sprintf(
@@ -327,7 +321,7 @@ class Refund extends Dokan {
 			$message = esc_html__( 'Refund has been canceled.', 'lemonway' );
 
 			$message .= ' ';
-			$message .= esc_html__('Reason: ', 'lemonway');
+			$message .= esc_html__( 'Reason: ', 'lemonway' );
 			$message .= $this->lemonway_api->errorMessage( $lemonway_refund->get_error_message() );
 
 			$log_message = sprintf(
@@ -360,7 +354,7 @@ class Refund extends Dokan {
 			absint( $refund->get_order_id() ),
 			absint( $seller_id ),
 			wp_strip_all_tags( $message ),
-			wp_json_encode(  $lemonway_refund )
+			wp_json_encode( $lemonway_refund )
 		);
 		Helper::log( $log_message, 'Refund', 'info' );
 		$order->add_order_note( $message );

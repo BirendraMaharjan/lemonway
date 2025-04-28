@@ -34,7 +34,6 @@ class Refund extends Api {
 		);
 
 		return $this->makeRequest( $args );
-
 	}
 
 	/**
