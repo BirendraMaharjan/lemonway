@@ -57,6 +57,7 @@ jQuery(function ($) {
     initialize: function initialize() {
       var _this = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var results;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -68,21 +69,30 @@ jQuery(function ($) {
               _context.next = 5;
               return Promise.allSettled([_this.initializePaypalButton(), _this.initializeCardFields()]);
             case 5:
+              results = _context.sent;
+              // Log each result
+              results.forEach(function (result, index) {
+                var method = index === 0 ? 'initializePaypalButton' : 'initializeCardFields';
+                if (result.status !== 'fulfilled') {
+                  // eslint-disable-next-line no-console
+                  console.info("\u274C ".concat(method, " failed:"), result.reason);
+                }
+              });
               _this.updatePaymentUI();
               _this.setupPaymentMethodListeners();
-              _context.next = 13;
+              _context.next = 15;
               break;
-            case 9:
-              _context.prev = 9;
+            case 11:
+              _context.prev = 11;
               _context.t0 = _context["catch"](0);
               _this.handleError("".concat(wc_checkout_params.i18n_checkout_error));
               // eslint-disable-next-line no-console
               console.error('Payment initialization failed:', _context.t0);
-            case 13:
+            case 15:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[0, 9]]);
+        }, _callee, null, [[0, 11]]);
       }))();
     },
     init: function init() {
@@ -293,7 +303,11 @@ jQuery(function ($) {
      */
     initializeCardFields: function initializeCardFields() {
       var _this5 = this;
-      return new Promise(function (resolve) {
+      return new Promise(function (resolve, reject) {
+        var retries = 0;
+        var maxRetries = 10;
+        var retryInterval = 500; // milliseconds
+
         var checkCardFieldsReady = function checkCardFieldsReady() {
           if (window.LwHostedFields && typeof window.LwHostedFields.findLabelFor === 'function') {
             _this5.isCardInitialized = true;
@@ -339,7 +353,14 @@ jQuery(function ($) {
             });
             resolve();
           } else {
-            setTimeout(checkCardFieldsReady, 500);
+            retries++;
+            if (retries >= maxRetries) {
+              $('.lemonway-payment-method-card').hide(); // disable the input
+              $('#lemonway-payment-type-paypal').trigger('click');
+              reject(new Error('LwHostedFields not available.'));
+            } else {
+              setTimeout(checkCardFieldsReady, retryInterval);
+            }
           }
         };
         checkCardFieldsReady();
@@ -433,7 +454,10 @@ jQuery(function ($) {
      */
     initializePaypalButton: function initializePaypalButton() {
       var _this8 = this;
-      return new Promise(function (resolve) {
+      return new Promise(function (resolve, reject) {
+        var retries = 0;
+        var maxRetries = 10;
+        var retryInterval = 500;
         var checkPaypalReady = function checkPaypalReady() {
           if (window.paypal && window.paypal.Buttons) {
             _this8.isPaypalInitialized = true;
@@ -457,7 +481,13 @@ jQuery(function ($) {
             });
             resolve();
           } else {
-            setTimeout(checkPaypalReady, 500);
+            retries++;
+            if (retries >= maxRetries) {
+              $(_this8.paypalContainerSelector).hide();
+              reject(new Error('PayPal SDK not available.'));
+            } else {
+              setTimeout(checkPaypalReady, retryInterval);
+            }
           }
         };
         checkPaypalReady();

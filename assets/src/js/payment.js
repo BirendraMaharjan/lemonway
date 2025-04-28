@@ -55,10 +55,23 @@ jQuery(function ($) {
 				this.showLoadingState();
 
 				// Initialize payment methods in parallel
-				await Promise.allSettled([
+
+				const results = await Promise.allSettled([
 					this.initializePaypalButton(),
 					this.initializeCardFields(),
 				]);
+
+				// Log each result
+				results.forEach((result, index) => {
+					const method =
+						index === 0
+							? 'initializePaypalButton'
+							: 'initializeCardFields';
+					if (result.status !== 'fulfilled') {
+						// eslint-disable-next-line no-console
+						console.info(`❌ ${method} failed:`, result.reason);
+					}
+				});
 
 				this.updatePaymentUI();
 				this.setupPaymentMethodListeners();
@@ -290,7 +303,11 @@ jQuery(function ($) {
 		 * Initialize Lemonway Hosted Fields for card payments
 		 */
 		initializeCardFields() {
-			return new Promise((resolve) => {
+			return new Promise((resolve, reject) => {
+				let retries = 0;
+				const maxRetries = 10;
+				const retryInterval = 500; // milliseconds
+
 				const checkCardFieldsReady = () => {
 					if (
 						window.LwHostedFields &&
@@ -358,7 +375,14 @@ jQuery(function ($) {
 
 						resolve();
 					} else {
-						setTimeout(checkCardFieldsReady, 500);
+						retries++;
+						if (retries >= maxRetries) {
+							$('.lemonway-payment-method-card').hide(); // disable the input
+							$('#lemonway-payment-type-paypal').trigger('click');
+							reject(new Error('LwHostedFields not available.'));
+						} else {
+							setTimeout(checkCardFieldsReady, retryInterval);
+						}
 					}
 				};
 
@@ -417,7 +441,10 @@ jQuery(function ($) {
 		 * Initialize PayPal Smart Button
 		 */
 		initializePaypalButton() {
-			return new Promise((resolve) => {
+			return new Promise((resolve, reject) => {
+				let retries = 0;
+				const maxRetries = 10;
+				const retryInterval = 500;
 				const checkPaypalReady = () => {
 					if (window.paypal && window.paypal.Buttons) {
 						this.isPaypalInitialized = true;
@@ -443,7 +470,13 @@ jQuery(function ($) {
 
 						resolve();
 					} else {
-						setTimeout(checkPaypalReady, 500);
+						retries++;
+						if (retries >= maxRetries) {
+							$(this.paypalContainerSelector).hide();
+							reject(new Error('PayPal SDK not available.'));
+						} else {
+							setTimeout(checkPaypalReady, retryInterval);
+						}
 					}
 				};
 
