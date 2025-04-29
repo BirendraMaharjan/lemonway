@@ -40,34 +40,36 @@ foreach ( $order->get_refunds() as $refund ) {
 ?>
 
 <div id="woocommerce-order-items" class="postbox" style='border: none'>
-	<div class="postbox-header">
-		<div class="handle-actions hide-if-no-js">
-			<button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="woocommerce-order-items-handle-order-higher-description">
-				<span class="order-higher-indicator" aria-hidden="true"></span>
-			</button>
-			<button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="woocommerce-order-items-handle-order-lower-description">
-				<span class="screen-reader-text"></span>
-				<span class="order-lower-indicator" aria-hidden="true"></span>
-			</button>
-			<button type="button" class="handlediv" aria-expanded="true">
-				<span class="toggle-indicator" aria-hidden="true"></span>
-			</button>
-		</div>
-	</div>
-	<div class="inside">
-		<div class="woocommerce_order_items_wrapper wc-order-items-editable">
-			<table cellpadding="0" cellspacing="0" class="woocommerce_order_items">
-				<thead>
-				<tr>
-					<th colspan="2">Item</th>
-					<th><?php esc_html_e( 'Type', 'dokan-lite' ); ?></th>
-					<th><?php esc_html_e( 'Rate', 'dokan-lite' ); ?></th>
-					<th><?php esc_html_e( 'Qty', 'dokan-lite' ); ?></th>
-					<th><?php esc_html_e( 'Commission', 'dokan-lite' ); ?></th>
-				</tr>
-				</thead>
+    <div class="postbox-header">
+        <div class="handle-actions hide-if-no-js">
+            <button type="button" class="handle-order-higher" aria-disabled="false"
+                    aria-describedby="woocommerce-order-items-handle-order-higher-description">
+                <span class="order-higher-indicator" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="handle-order-lower" aria-disabled="false"
+                    aria-describedby="woocommerce-order-items-handle-order-lower-description">
+                <span class="screen-reader-text"></span>
+                <span class="order-lower-indicator" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="handlediv" aria-expanded="true">
+                <span class="toggle-indicator" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+    <div class="inside">
+        <div class="woocommerce_order_items_wrapper wc-order-items-editable">
+            <table cellpadding="0" cellspacing="0" class="woocommerce_order_items">
+                <thead>
+                <tr>
+                    <th colspan="2">Item</th>
+                    <th><?php esc_html_e( 'Type', 'dokan-lite' ); ?></th>
+                    <th><?php esc_html_e( 'Rate', 'dokan-lite' ); ?></th>
+                    <th><?php esc_html_e( 'Qty', 'dokan-lite' ); ?></th>
+                    <th><?php esc_html_e( 'Commission', 'dokan-lite' ); ?></th>
+                </tr>
+                </thead>
 
-				<tbody id="order_line_items">
+                <tbody id="order_line_items">
 				<?php foreach ( $order->get_items() as $item_id => $item ) : ?>
 					<?php
 					$product      = $item->get_product();
@@ -90,74 +92,79 @@ foreach ( $order->get_refunds() as $refund ) {
 					$flat                 = isset( $commission_data->get_parameters()['flat'] ) ? $commission_data->get_parameters()['flat'] : 0;
 					$commission_type_html = $all_commission_types[ $commission_type ];
 					?>
-					<tr class="item  <?php echo esc_attr( $row_class ); ?>" data-order_item_id="<?php echo $item->get_id(); ?>">
-						<td class="thumb">
-							<div class="wc-order-item-thumbnail"> <?php echo wp_kses_post( $thumbnail ); ?> </div>
-						</td>
-						<td class="name">
+                    <tr class="item  <?php echo esc_attr( $row_class ); ?>"
+                        data-order_item_id="<?php echo $item->get_id(); ?>">
+                        <td class="thumb">
+                            <div class="wc-order-item-thumbnail"> <?php echo wp_kses_post( $thumbnail ); ?> </div>
+                        </td>
+                        <td class="name">
 							<?php
 							if ( $product_link ) :
 								?>
-									<a href="<?php echo esc_url( $product_link ); ?>" class="wc-order-item-name"><?php echo wp_kses_post( $item->get_name() ); ?></a>
-								<?php
+                                <a href="<?php echo esc_url( $product_link ); ?>"
+                                   class="wc-order-item-name"><?php echo wp_kses_post( $item->get_name() ); ?></a>
+							<?php
 							else :
 								?>
-									<div class="wc-order-item-name"><?php echo wp_kses_post( $item->get_name() ); ?></div>
-								<?php
+                                <div class="wc-order-item-name"><?php echo wp_kses_post( $item->get_name() ); ?></div>
+							<?php
 							endif;
 
 							if ( $product && $product->get_sku() ) :
 								?>
-									<div class="wc-order-item-sku"><strong><?php echo esc_html__( 'SKU:', 'dokan-lite' ); ?></strong><?php echo esc_html( $product->get_sku() ); ?></div>
-								<?php
+                                <div class="wc-order-item-sku">
+                                    <strong><?php echo esc_html__( 'SKU:', 'dokan-lite' ); ?></strong><?php echo esc_html( $product->get_sku() ); ?>
+                                </div>
+							<?php
 							endif;
 
 							if ( $item->get_variation_id() ) :
 								?>
-									<div class="wc-order-item-variation">
-										<strong>
-											<?php
-											echo esc_html__( 'Variation ID:', 'dokan-lite' );
+                                <div class="wc-order-item-variation">
+                                    <strong>
+										<?php
+										echo esc_html__( 'Variation ID:', 'dokan-lite' );
 
-											if ( 'product_variation' === get_post_type( $item->get_variation_id() ) ) :
-												echo esc_html( $item->get_variation_id() );
-											else :
-												/* translators: %s: variation id */
-												printf( esc_html__( '%s (No longer exists)', 'dokan-lite' ), esc_html( $item->get_variation_id() ) );
-											endif;
-											?>
-									</div>
-								<?php
+										if ( 'product_variation' === get_post_type( $item->get_variation_id() ) ) :
+											echo esc_html( $item->get_variation_id() );
+										else :
+											/* translators: %s: variation id */
+											printf( esc_html__( '%s (No longer exists)', 'dokan-lite' ), esc_html( $item->get_variation_id() ) );
+										endif;
+										?>
+                                </div>
+							<?php
 							endif;
 							?>
-						</td>
+                        </td>
 
 
-						<td width="1%">
-							<div class="view">
-								<bdi><?php echo esc_html( $commission_type_html ); ?></bdi>
-							</div>
-						</td>
-						<td width="1%">
-							<div class="view">
-								<?php echo esc_html( isset( $commission_data->get_parameters()['percentage'] ) ? $commission_data->get_parameters()['percentage'] : 0 ); ?>%&nbsp;+&nbsp;<?php echo wc_price( isset( $commission_data->get_parameters()['flat'] ) ? $commission_data->get_parameters()['flat'] : 0 ); ?>
-							</div>
-						</td>
-						<td class="quantity" width="1%">
-							<div class="view">
+                        <td width="1%">
+                            <div class="view">
+                                <bdi><?php echo esc_html( $commission_type_html ); ?></bdi>
+                            </div>
+                        </td>
+                        <td width="1%">
+                            <div class="view">
+								<?php echo esc_html( isset( $commission_data->get_parameters()['percentage'] ) ? $commission_data->get_parameters()['percentage'] : 0 ); ?>
+                                %&nbsp;+&nbsp;<?php echo wc_price( isset( $commission_data->get_parameters()['flat'] ) ? $commission_data->get_parameters()['flat'] : 0 ); ?>
+                            </div>
+                        </td>
+                        <td class="quantity" width="1%">
+                            <div class="view">
 								<?php
 								echo '<small class="times">&times;</small> ' . esc_html( $item->get_quantity() );
 
-								$refunded_qty = -1 * $order->get_qty_refunded_for_item( $item_id );
+								$refunded_qty = - 1 * $order->get_qty_refunded_for_item( $item_id );
 
 								if ( $refunded_qty ) {
-									echo '<small class="refunded">' . esc_html( $refunded_qty * -1 ) . '</small>';
+									echo '<small class="refunded">' . esc_html( $refunded_qty * - 1 ) . '</small>';
 								}
 								?>
-							</div>
-						</td>
-						<td width="1%">
-							<div class="view">
+                            </div>
+                        </td>
+                        <td width="1%">
+                            <div class="view">
 								<?php
 								$amount              = $item->get_total();
 								$original_commission = $commission_data->get_admin_commission();
@@ -167,7 +174,7 @@ foreach ( $order->get_refunds() as $refund ) {
 								}
 
 								?>
-									<bdi>
+                                <bdi>
 									<?php
 									echo wc_price(
 										$original_commission,
@@ -177,12 +184,12 @@ foreach ( $order->get_refunds() as $refund ) {
 										)
 									);
 									?>
-											</bdi>
+                                </bdi>
 								<?php
 
 								if ( $order->get_total_refunded_for_item( $item_id ) ) :
 									?>
-										<small class="refunded">
+                                    <small class="refunded">
 										<?php
 										echo wc_price(
 											$commission_refunded,
@@ -192,50 +199,61 @@ foreach ( $order->get_refunds() as $refund ) {
 											)
 										);
 										?>
-																</small>
-									<?php
+                                    </small>
+								<?php
 								endif;
 								?>
-							</div>
-						</td>
-					</tr>
+                            </div>
+                        </td>
+                    </tr>
 				<?php endforeach; ?>
 				<?php
-				echo 'here';
-				var_dump( $order->get_meta( '_german_vendor_commission' ) );
 
-				if ( $lw_german_commission_data = $order->get_meta( '_german_vendor_commission' ) ) :
-					?>
-				<tr class="item  <?php echo esc_attr( $row_class ); ?>" data-order_item_id="<?php echo $item->get_id(); ?>">
-					<td class="name" colspan="2">
-						<?php esc_html_e( 'German vendor commission', 'lemonway' ); ?>
-					</td>
-					<td width="1%" colspan="3">
-						<div class="view">
-							<?php esc_html_e( '19% of commission', 'lemonway' ); ?>
-						</div>
-					</td>
-					<td width="1%">
-						<div class="view">
+				$lw_germany_commission_data = $order->get_meta( '_germany_vendor_commission' );
+
+				//	if ( $lw_germany_commission_data ) :
+				?>
+                <tr class="item  <?php echo esc_attr( $row_class ); ?>"
+                    data-order_item_id="<?php echo $item->get_id(); ?>">
+                    <td class="name" colspan="2">
+						<?php
+						$vendor_id          = dokan_get_seller_id_by_order( $order );
+						$vendor             = dokan()->vendor->get( $vendor_id );
+						$store_info         = $vendor->get_shop_info();
+						$country_code       = isset( $store_info['address']['country'] ) ? $store_info['address']['country'] : '';
+						$percentage_country = ( $country_code === 'DE' ) ? '19' : '0';
+						// Get WooCommerce countries class
+						$countries    = new WC_Countries();
+						$country_name = ! empty( $country_code ) ? $countries->countries[ $country_code ] : __( 'not set in vendor', 'lemonway' );
+
+						printf( __( 'Extra commission for %s', 'lemonway' ), $country_name ); ?>
+                    </td>
+                    <td width="1%" colspan="3">
+                        <div class="view">
+							<?php printf( __( '%s&#37; of commission', 'lemonway' ), $percentage_country ); ?>
+                        </div>
+                    </td>
+                    <td width="1%">
+                        <div class="view">
 							<?php
 							echo wc_price(
-								$lw_german_commission_data['germany_commission']
+								$lw_germany_commission_data['germany_commission'] ?? 0
 							);
 							?>
-						</div>
-					</td>
-				</tr>
-				<?php endif; ?>
-				</tbody>
-			</table>
-		</div>
-		<div class="wc-order-data-row wc-order-totals-items wc-order-items-editable">
-			<table class="wc-order-totals">
-				<tbody>
-				<tr>
-					<td class="label"><?php esc_html_e( 'Net total:', 'dokan-lite' ); ?></td>
-					<td width="1%"></td>
-					<td class="total">
+                        </div>
+                    </td>
+                </tr>
+				<?php //endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="wc-order-data-row wc-order-totals-items wc-order-items-editable">
+            <table class="wc-order-totals">
+                <tbody>
+                <tr>
+                    <td class="label"><?php esc_html_e( 'Net total:', 'dokan-lite' ); ?></td>
+                    <td width="1%"></td>
+                    <td class="total">
 						<?php
 						echo wc_price(
 							$order_total,
@@ -245,12 +263,12 @@ foreach ( $order->get_refunds() as $refund ) {
 							)
 						);
 						?>
-					</td>
-				</tr>
-				<tr>
-					<td class="label"><?php esc_html_e( 'Vendor earning:', 'dokan-lite' ); ?></td>
-					<td width="1%"></td>
-					<td class="total">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label"><?php esc_html_e( 'Vendor earning:', 'dokan-lite' ); ?></td>
+                    <td width="1%"></td>
+                    <td class="total">
 						<?php
 						echo wc_price(
 							$net_amount,
@@ -260,47 +278,47 @@ foreach ( $order->get_refunds() as $refund ) {
 							)
 						);
 						?>
-					</td>
-				</tr>
+                    </td>
+                </tr>
 				<?php if ( $shipping_fee_recipient === $admin ) : ?>
-				<tr>
-					<td class="label"><?php esc_html_e( 'Shipping Fee:', 'dokan-lite' ); ?></td>
-					<td width="1%"></td>
-					<td class="total">
-						<?php
-						echo wc_price(
-							$shipping_fee,
-							array(
-								'currency' => $order->get_currency(),
-								'decimals' => wc_get_price_decimals(),
-							)
-						);
-						?>
-						<?php
-						if ( $shipping_fee_refunded ) :
-							?>
-							<small class="refunded refunded-recipient">
+                    <tr>
+                        <td class="label"><?php esc_html_e( 'Shipping Fee:', 'dokan-lite' ); ?></td>
+                        <td width="1%"></td>
+                        <td class="total">
 							<?php
 							echo wc_price(
-								$shipping_fee_refunded,
+								$shipping_fee,
 								array(
 									'currency' => $order->get_currency(),
 									'decimals' => wc_get_price_decimals(),
 								)
 							);
 							?>
-																		</small>
 							<?php
-						endif;
-						?>
-					</td>
-				</tr>
+							if ( $shipping_fee_refunded ) :
+								?>
+                                <small class="refunded refunded-recipient">
+									<?php
+									echo wc_price(
+										$shipping_fee_refunded,
+										array(
+											'currency' => $order->get_currency(),
+											'decimals' => wc_get_price_decimals(),
+										)
+									);
+									?>
+                                </small>
+							<?php
+							endif;
+							?>
+                        </td>
+                    </tr>
 				<?php endif; ?>
 				<?php if ( $product_tax_fee_recipient === $admin ) : ?>
-					<tr>
-						<td class="label"><?php esc_html_e( 'Product Tax Fee:', 'dokan-lite' ); ?></td>
-						<td width="1%"></td>
-						<td class="total">
+                    <tr>
+                        <td class="label"><?php esc_html_e( 'Product Tax Fee:', 'dokan-lite' ); ?></td>
+                        <td width="1%"></td>
+                        <td class="total">
 							<?php
 							echo wc_price(
 								$product_tax_fee,
@@ -313,28 +331,28 @@ foreach ( $order->get_refunds() as $refund ) {
 							<?php
 							if ( $product_tax_fee_refunded ) :
 								?>
-								<small class="refunded refunded-recipient">
-								<?php
-								echo wc_price(
-									$product_tax_fee_refunded,
-									array(
-										'currency' => $order->get_currency(),
-										'decimals' => wc_get_price_decimals(),
-									)
-								);
-								?>
-																			</small>
-								<?php
+                                <small class="refunded refunded-recipient">
+									<?php
+									echo wc_price(
+										$product_tax_fee_refunded,
+										array(
+											'currency' => $order->get_currency(),
+											'decimals' => wc_get_price_decimals(),
+										)
+									);
+									?>
+                                </small>
+							<?php
 							endif;
 							?>
-						</td>
-					</tr>
+                        </td>
+                    </tr>
 				<?php endif; ?>
 				<?php if ( $shipping_tax_fee_recipient === $admin ) : ?>
-					<tr>
-						<td class="label"><?php esc_html_e( 'Shipping Tax Fee:', 'dokan-lite' ); ?></td>
-						<td width="1%"></td>
-						<td class="total">
+                    <tr>
+                        <td class="label"><?php esc_html_e( 'Shipping Tax Fee:', 'dokan-lite' ); ?></td>
+                        <td width="1%"></td>
+                        <td class="total">
 							<?php
 							echo wc_price(
 								$shipping_tax_fee,
@@ -347,35 +365,36 @@ foreach ( $order->get_refunds() as $refund ) {
 							<?php
 							if ( $shipping_tax_fee_refunded ) :
 								?>
-								<small class="refunded refunded-recipient">
-								<?php
-								echo wc_price(
-									$shipping_tax_fee_refunded,
-									array(
-										'currency' => $order->get_currency(),
-										'decimals' => wc_get_price_decimals(),
-									)
-								);
-								?>
-																			</small>
-								<?php
+                                <small class="refunded refunded-recipient">
+									<?php
+									echo wc_price(
+										$shipping_tax_fee_refunded,
+										array(
+											'currency' => $order->get_currency(),
+											'decimals' => wc_get_price_decimals(),
+										)
+									);
+									?>
+                                </small>
+							<?php
 							endif;
 							?>
-						</td>
-					</tr>
+                        </td>
+                    </tr>
 				<?php endif; ?>
-				</tbody>
-			</table>
+                </tbody>
+            </table>
 
-			<div class="clear"></div>
+            <div class="clear"></div>
 
 
-			<table class="wc-order-totals" style="border-top: 1px solid #999; border-bottom: none; margin-top:12px; padding-top:12px">
-				<tbody>
-				<tr>
-					<td class="label label-highlight"><?php esc_html_e( 'Total commission:', 'dokan-lite' ); ?></td>
-					<td width="1%"></td>
-					<td class="total">
+            <table class="wc-order-totals"
+                   style="border-top: 1px solid #999; border-bottom: none; margin-top:12px; padding-top:12px">
+                <tbody>
+                <tr>
+                    <td class="label label-highlight"><?php esc_html_e( 'Total commission:', 'dokan-lite' ); ?></td>
+                    <td width="1%"></td>
+                    <td class="total">
 						<?php
 						echo wc_price(
 							$total_commission,
@@ -385,46 +404,46 @@ foreach ( $order->get_refunds() as $refund ) {
 							)
 						);
 						?>
-					</td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <style>
-	small.refunded-recipient {
-		display: block;
-		color: #a00;
-		white-space: nowrap;
-		font-size: smaller;
-		padding: 0;
-		margin: 0
-	}
+    small.refunded-recipient {
+        display: block;
+        color: #a00;
+        white-space: nowrap;
+        font-size: smaller;
+        padding: 0;
+        margin: 0
+    }
 
-	small.refunded-recipient::before {
-		font-family: Dashicons;
-		speak: never;
-		font-weight: 400;
-		font-variant: normal;
-		text-transform: none;
-		line-height: 1;
-		-webkit-font-smoothing: antialiased;
-		margin: 0;
-		text-indent: 0;
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		text-align: center;
-		content: "\f171";
-		position: relative;
-		top: auto;
-		left: auto;
-		margin: -1px 4px 0 0;
-		vertical-align: middle;
-		line-height: 1em;
-	}
+    small.refunded-recipient::before {
+        font-family: Dashicons;
+        speak: never;
+        font-weight: 400;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+        text-indent: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        content: "\f171";
+        position: relative;
+        top: auto;
+        left: auto;
+        margin: -1px 4px 0 0;
+        vertical-align: middle;
+        line-height: 1em;
+    }
 </style>

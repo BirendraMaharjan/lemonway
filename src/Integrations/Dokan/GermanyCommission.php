@@ -76,26 +76,31 @@ class GermanyCommission {
 
 		// Calculate admin commission before VAT.
 		$admin_commission = $order_total - $earning_or_commission;
+		$germany_commission = 0;
+		$total_commission = 0;
 
 		// Apply 19% commission of admin commission if the store is in Germany.
 		if ( isset( $store_info['address']['country'] ) && $store_info['address']['country'] === 'DE' ) {
 
-			$german_commission = $admin_commission * 0.19;
-			$total_commission  = $admin_commission + $german_commission;
+			$germany_commission = $admin_commission * 0.19;
+			$total_commission  = $admin_commission + $germany_commission;
 
 			// Final earning = order total - (admin commission + 19 % german commission of admin commission).
 			$earning_or_commission = $order_total - $total_commission;
-
-			$german_commission_data = array(
-				'commission'         => $admin_commission,
-				'germany_commission' => $german_commission,
-				'total_commission'   => $total_commission,
-			);
-
-			// Update order meta-data with German vendor commission.
-			$order->update_meta_data( '_german_vendor_commission', $german_commission_data );
-			$order->save();
 		}
+
+		$germany_commission_data = array(
+			'seller_id' => $seller_id,
+			'country' => $store_info['address']['country'],
+			'total_order' => $order_total,
+			'commission'         => $admin_commission,
+			'germany_commission' => $germany_commission,
+			'total_commission'   => $total_commission,
+		);
+
+		// Update order meta-data with German vendor commission.
+		$order->update_meta_data( '_germany_vendor_commission', $germany_commission_data );
+		$order->save();
 
 		return $earning_or_commission;
 	}
