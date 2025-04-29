@@ -389,24 +389,41 @@ class Helper {
 	}
 
 
-	public static function log( $message, $category = '', $level = 'debug' ) {
+	/**
+	 * Log messages for Lemonway integration.
+	 *
+	 * @param mixed  $message  The message or data to log.
+	 * @param string $category Optional category label for the log entry.
+	 * @param string $level    Log level: 'emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', or 'debug'.
+	 */
+	public static function log( $message, $category = '', $level = 'debug', $source = 'lemonway' ) {
 		// Ensure WooCommerce logging is available.
 		if ( ! function_exists( 'wc_get_logger' ) ) {
 			return;
 		}
 
-		$logger  = wc_get_logger();
+		// Get logger instance.
+		$logger = wc_get_logger();
+
+		// Prepare message content.
+		$data = is_array($message) || is_object($message)
+			? wp_json_encode($message, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+			: (string) $message;
+
+
+		// Create meaningful log message with category prefix if available
+		$formatted_message = !empty($category)
+			? "[{$category}] {$data}"
+			: $data;
+
+		// Set context for log entry
 		$context = array(
-			'source'    => 'lemonway',
+			'source' => $source,
 			'backtrace' => true,
-			'data'      => wp_json_encode( $message, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ),
 		);
 
-		// Prepare the message.
-		$formatted_message = esc_html( $category );
-
-		// Log the message.
-		$logger->log( $level, $formatted_message, $context );
+		// Log the message with appropriate level
+		$logger->log($level, $formatted_message, $context);
 	}
 
 	public static function getRefundIdsByOrderKey( $test_mode = null ) {

@@ -182,6 +182,7 @@ class BackgroundProcess {
 
 			if ( is_wp_error( $response ) ) {
 				Errors::writeLogCron( $response );
+				Helper::log( $response, 'settlement p2p', 'debug', 'lemonway-settlement' );
 				continue;
 			}
 
@@ -225,6 +226,7 @@ class BackgroundProcess {
 				if ( is_wp_error( $payment_response ) ) {
 
 					Errors::writeLogCron( $payment_response );
+					Helper::log( $payment_response, 'settlement p2p', 'debug', 'lemonway-settlement' );
 					break;
 				}
 
@@ -240,6 +242,8 @@ class BackgroundProcess {
 						)
 					)
 				);
+
+				Helper::log( $payment_response, 'settlement p2p', 'info', 'lemonway-settlement' );
 
 				// Get existing transaction history from order meta.
 				$existing_history = $order->get_meta( 'lemonway_payment_settlement_details' );

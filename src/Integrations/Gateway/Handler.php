@@ -320,7 +320,7 @@ class Handler {
 					wp_strip_all_tags( $message ),
 					wp_json_encode( $processor )
 				);
-				Helper::log( $log_message, 'Payment PayPal Resume', 'error' );
+				Helper::log( $log_message, 'Payment PayPal Resume', 'debug' );
 
 				return array(
 					'type'    => 'lemonwy_payment_paypal_resume',
@@ -341,7 +341,7 @@ class Handler {
 				wp_strip_all_tags( $message ),
 				wp_json_encode( $transaction_details )
 			);
-			Helper::log( $log_message, 'Payment Transaction Retrieve', 'error' );
+			Helper::log( $log_message, 'Payment Transaction Retrieve', 'debug' );
 
 			return array(
 				'type'    => 'lemonwy_payment_transaction_retrieve',
@@ -365,7 +365,7 @@ class Handler {
 		if ( $transaction_amount ) {
 			if ( $transaction_status === 0 ) {
 				$status  = 'completed';
-				$message = esc_html__( 'Payment has been unsuccessful!', 'lemonway' );
+				$message = esc_html__( 'Payment has been successful!', 'lemonway' );
 				$order->payment_complete();
 
 				// Schedule event to check payment status later (e.g., in 2 minutes).

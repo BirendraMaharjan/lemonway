@@ -72,30 +72,44 @@ class Withdraw extends Dokan {
 		$iban = $this->iban->retrieve( $merchant_id );
 
 		if ( is_wp_error( $iban ) ) {
-			esc_html_e( 'Please reload and try later.', 'lemonway' );
+
+			// Special handling for missing IBAN
+			if ($iban->get_error_code() === 'lemonway_iban_retrieve_error') {
+				$this->displayLinkBankMessage();
+				return false;
+			}
+			echo esc_html( $iban->get_error_message() );
 
 			return false;
 		}
 
-		if ( empty( $iban ) ) {
-			esc_html_e( 'Please connect your bank account first.', 'lemonway' );
-			echo '<br><a href="' . esc_url( dokan_get_navigation_url( 'settings/payment-manage-lemonway-edit' ) . '?link-bank' ) . '">' . esc_html__( 'Link Bank', 'lemonway' ) . '</a>';
+		// Check if any IBAN has status 5 (verified)
+		$verified_ibans = array_filter($iban, function($item) {
+			return isset($item['status']) && $item['status'] === 5;
+		});
 
-			return false;
+		if (!empty($verified_ibans)) {
+			// Valid IBAN found, return result
+			return $result; // Note: You need to define $result in your actual code
 		}
 
-		if ( array_filter( $iban, fn( $item ) => $item['status'] === 5 ) ) {
-			return $result; // Valid IBAN found, return result.
-		}
-
+		// IBAN exists but is not verified
 		printf(
 			'<p class="iban-status">%s</p>',
-			esc_html__( 'IBAN has not been verified yet.', 'lemonway' )
+			esc_html__('IBAN has not been verified yet.', 'lemonway')
 		);
 
 		return false;
 	}
 
+	/**
+	 * Display message prompting user to link their bank account.
+	 */
+	public function displayLinkBankMessage() {
+		esc_html_e('Please connect your bank account first.', 'lemonway');
+		$bank_link_url = esc_url(dokan_get_navigation_url('settings/payment-manage-lemonway-edit') . '?link-bank');
+		echo '<br><a href="' . $bank_link_url . '">' . esc_html__('Link Bank', 'lemonway') . '</a>';
+	}
 
 	public function processWithdraw( $result, $args ) {
 		$request = $_REQUEST;
@@ -128,7 +142,7 @@ class Withdraw extends Dokan {
 				$message
 			);
 
-			Helper::log( sprintf( $log_message, 'Withdraw', 'error' ) );
+			Helper::log( $log_message, 'Withdraw', 'debug'   );
 
 			return new WP_Error( 'lemonway_dokan_rest_withdraw_error', wp_kses_post( $message ) );
 		}
@@ -149,7 +163,7 @@ class Withdraw extends Dokan {
 				$message
 			);
 
-			Helper::log( sprintf( $log_message, 'Withdraw', 'error' ) );
+			Helper::log( $log_message, 'Withdraw', 'debug' );
 
 			return new WP_Error( 'lemonway_dokan_rest_withdraw_error', wp_kses_post( $message ) );
 		}
@@ -168,7 +182,7 @@ class Withdraw extends Dokan {
 				$message
 			);
 
-			Helper::log( sprintf( $log_message, 'Withdraw', 'error' ) );
+			Helper::log( $log_message, 'Withdraw', 'debug' );
 
 			return new WP_Error( 'lemonway_dokan_rest_withdraw_error', wp_kses_post( $message ) );
 		}
@@ -201,7 +215,7 @@ class Withdraw extends Dokan {
 				$message
 			);
 
-			Helper::log( sprintf( $log_message, 'Withdraw', 'error' ) );
+			Helper::log( $log_message, 'Withdraw', 'debug' );
 
 			return new WP_Error( 'lemonway_dokan_rest_withdraw_error', wp_kses_post( $message ) );
 
@@ -224,7 +238,7 @@ class Withdraw extends Dokan {
 				$message
 			);
 
-			Helper::log( $log_message, 'Withdraw', 'error' );
+			Helper::log( $log_message, 'Withdraw', 'debug' );
 
 			return new WP_Error( 'lemonway_dokan_rest_withdraw_error', wp_kses_post( $message ) );
 		}

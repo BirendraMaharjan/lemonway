@@ -491,6 +491,7 @@ class Api {
 	public function errorMessage( $key = null ) {
 		$error_types = array(
 			'Forbidden'                               => esc_html__( 'Forbidden: Please try again.', 'lemonway' ),
+			'Not Found'                               => esc_html__( 'Please reload and try later.', 'lemonway' ),
 			'AMOUNT NOT ALLOWED'                      => esc_html__( 'Amount not allowed', 'lemonway' ),
 			'Incorrect URL address format '           => esc_html__( 'Invalid Website URL', 'lemonway' ),
 			'Amount higher than your account balance' => esc_html__( 'Amount higher than your account balance', 'lemonway' ),

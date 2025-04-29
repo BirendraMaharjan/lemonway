@@ -30,7 +30,13 @@ class Iban extends Api {
 	protected $type = 'moneyouts';
 
 
-	public function retrieve( string $account_id ) {
+	/**
+	 * Retrieve IBAN information for a specific account.
+	 *
+	 * @param string $account_id The unique identifier for the account.
+	 * @return array|WP_Error Array of IBANs on success, WP_Error on failure.
+	 */
+	public function retrieve( $account_id ) {
 		$url  = $this->makeUrl( $this->type . '/' . $account_id . '/iban' );
 		$args = array(
 			'url'    => $url,
@@ -43,8 +49,13 @@ class Iban extends Api {
 			return $response;
 		}
 
-		if ( empty( $response['ibans'][0]['id'] ) ) {
-			return new WP_Error( 'lemonway_iban_retrive_error', $this->errorMessage( esc_html__( 'IBAN not found.', 'lemonway' ) ), $response );
+		// Validate response data
+		if (empty($response['ibans']) || empty($response['ibans'][0]['id'])) {
+			return new WP_Error(
+				'lemonway_iban_retrieve_error',
+				esc_html__('IBAN not found for this account.', 'lemonway'),
+				$response
+			);
 		}
 
 		return $response['ibans'];
@@ -76,7 +87,7 @@ class Iban extends Api {
 				'bic'            => $data['iban_bic_code'],
 				'iban'           => $data['iban_number'],
 				'domiciliation1' => $data['iban_bank_address_line_1'],
-				'domiciliation2' => $data['iban_bank_address_line_2'],
+				//'domiciliation2' => $data['iban_bank_address_line_2'],
 			),
 		);
 

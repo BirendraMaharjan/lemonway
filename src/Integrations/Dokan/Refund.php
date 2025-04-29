@@ -89,7 +89,7 @@ class Refund extends Dokan {
 				wp_json_encode( $payment_response )
 			);
 
-			Helper::log( $log_message, 'Refund', 'error' );
+			Helper::log( $log_message, 'Refund', 'debug' );
 
 			return $vendor_refund;
 		}
@@ -110,7 +110,7 @@ class Refund extends Dokan {
 				wp_json_encode( $payment_response )
 			);
 
-			Helper::log( $log_message, 'Refund', 'error' );
+			Helper::log( $log_message, 'Refund', 'debug' );
 
 			return $vendor_refund;
 
@@ -191,7 +191,7 @@ class Refund extends Dokan {
 				$message
 			);
 
-			Helper::log( $log_message, 'Refund', 'error' );
+			Helper::log( $log_message, 'Refund', 'debug' );
 
 			$refund->set_refund_reason( $message )->cancel();
 
@@ -214,7 +214,7 @@ class Refund extends Dokan {
 				$message
 			);
 
-			Helper::log( $log_message, 'Refund', 'error' );
+			Helper::log( $log_message, 'Refund', 'debug' );
 
 			$refund->set_refund_reason( $message )->cancel();
 
@@ -235,7 +235,7 @@ class Refund extends Dokan {
 				$message
 			);
 
-			Helper::log( $log_message, 'Refund', 'error' );
+			Helper::log( $log_message, 'Refund', 'debug' );
 
 			$refund->set_refund_reason( $message )->cancel();
 
@@ -269,7 +269,7 @@ class Refund extends Dokan {
 				wp_json_encode( $balance )
 			);
 
-			Helper::log( $log_message, 'Refund', 'error' );
+			Helper::log( $log_message, 'Refund', 'debug' );
 
 			$refund->set_refund_reason( $message )->cancel();
 
@@ -309,7 +309,7 @@ class Refund extends Dokan {
 				wp_json_encode( $lemonway_refund )
 			);
 
-			Helper::log( $log_message, 'Refund', 'error' );
+			Helper::log( $log_message, 'Refund', 'debug' );
 
 			$refund->set_refund_reason( $message )->cancel();
 
@@ -333,7 +333,7 @@ class Refund extends Dokan {
 				wp_json_encode( $lemonway_refund )
 			);
 
-			Helper::log( $log_message, 'Refund', 'error' );
+			Helper::log( $log_message, 'Refund', 'debug' );
 
 			$refund->set_refund_reason( $message )->cancel();
 
@@ -394,7 +394,7 @@ class Refund extends Dokan {
 				wp_strip_all_tags( $message ),
 				wp_json_encode( $refund )
 			);
-			Helper::log( $log_message, 'Refund', 'error' );
+			Helper::log( $log_message, 'Refund', 'debug' );
 		}
 	}
 

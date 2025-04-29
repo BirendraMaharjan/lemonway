@@ -357,14 +357,14 @@ class SettingDokan {
 			'iban_bank_address_line_1' => array(
 				'name'          => 'settings[lemonway][iban_bank_address_line_1]',
 				'type'          => 'text',
-				'label'         => esc_html__( 'Bank Address Line 1', 'lemonway' ),
-				'placeholder'   => esc_html__( 'Bank Address Line 1', 'lemonway' ),
+				'label'         => esc_html__( 'Bank Address Line', 'lemonway' ),
+				'placeholder'   => esc_html__( 'Bank Address Line', 'lemonway' ),
 				'default'       => '',
 				'required'      => true,
 				'error_message' => esc_html__( 'Invalid bank country', 'lemonway' ),
 				'class'         => 'dokan-form-group',
 			),
-			'iban_bank_address_line_2' => array(
+			/*'iban_bank_address_line_2' => array(
 				'name'          => 'settings[lemonway][iban_bank_address_line_2]',
 				'type'          => 'text',
 				'label'         => esc_html__( 'Bank Address Line 2', 'lemonway' ),
@@ -372,7 +372,7 @@ class SettingDokan {
 				'default'       => '',
 				'error_message' => esc_html__( 'Invalid Bank Branch code', 'lemonway' ),
 				'class'         => 'dokan-form-group',
-			),
+			),*/
 			/* phpcs:disable */
 			/* 'iban_upload_document'      => array(
 				'name'          => 'upload_document',
