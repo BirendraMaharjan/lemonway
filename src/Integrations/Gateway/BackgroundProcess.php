@@ -226,7 +226,17 @@ class BackgroundProcess {
 				if ( is_wp_error( $payment_response ) ) {
 
 					Errors::writeLogCron( $payment_response );
-					Helper::log( $payment_response, 'settlement p2p', 'debug', 'lemonway-settlement' );
+
+
+					$message     = esc_html__( 'P2P transition has been unsuccessful!', 'lemonway' );
+					$log_message = sprintf(
+						'Lemonway settlement transition, Order ID: %s, Vendor ID: %s, Message: %s, API Response: %s',
+						absint( $tmp_order_id ),
+						absint( $vendor_id ),
+						wp_strip_all_tags( $message ),
+						wp_json_encode( $payment_response )
+					);
+					Helper::log( $log_message, 'settlement p2p', 'info', 'lemonway-settlement' );
 					break;
 				}
 
@@ -243,7 +253,16 @@ class BackgroundProcess {
 					)
 				);
 
-				Helper::log( $payment_response, 'settlement p2p', 'info', 'lemonway-settlement' );
+				$message     = esc_html__( 'P2P transition has been successful!', 'lemonway' );
+				$log_message = sprintf(
+					'Lemonway settlement transition ID: %s, Order ID: %s, Vendor ID: %s, Message: %s, API Response: %s',
+					absint( $payment_response['transaction']['id'] ),
+					absint( $tmp_order_id ),
+					absint( $vendor_id ),
+					wp_strip_all_tags( $message ),
+					wp_json_encode( $payment_response )
+				);
+				Helper::log( $log_message, 'settlement p2p', 'info', 'lemonway-settlement' );
 
 				// Get existing transaction history from order meta.
 				$existing_history = $order->get_meta( 'lemonway_payment_settlement_details' );

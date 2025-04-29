@@ -135,10 +135,22 @@ class Refund extends Dokan {
 		Helper::log( $log_message, 'Refund & settlement', 'info' );
 
 		$order->update_meta_data( 'lemonway_refund_p2p_status_' . $refund->get_id(), 'completed' );
-		$payment_existing_history   = (array) $order->get_meta( 'lemonway_payment_refund_settlement_details' );
-		$payment_existing_history[] = $payment_response;
-		$order->update_meta_data( 'lemonway_payment_refund_settlement_details', $payment_existing_history );
+
+		// Get existing transaction history from order meta.
+		$existing_history = $order->get_meta( 'lemonway_payment_refund_settlement_details' );
+
+		// Initialize history array if empty.
+		if ( empty( $existing_history ) ) {
+			$existing_history = array();
+		}
+		// Add new transaction to the history.
+		$existing_history[] = $payment_response;
+
+		$order->update_meta_data( 'lemonway_payment_refund_settlement_details', $existing_history );
 		// p2p from vendor to technical account before refund.
+
+		// save metadata.
+		$order->save();
 
 		return $vendor_refund;
 	}
@@ -360,8 +372,16 @@ class Refund extends Dokan {
 		$order->add_order_note( $message );
 
 		$order->update_meta_data( 'lemonway_refund_p2p_status_' . $refund->get_id(), 'processed' );
-		$existing_history   = (array) $order->get_meta( 'lemonway_payment_refund_details' );
-		$existing_history[] = $existing_history;
+
+		// Get existing transaction history from order meta.
+		$existing_history = $order->get_meta( 'lemonway_payment_refund_details' );
+
+		// Initialize history array if empty.
+		if ( empty( $existing_history ) ) {
+			$existing_history = array();
+		}
+		// Add new transaction to the history.
+		$existing_history[] = $lemonway_refund;
 		$order->update_meta_data( 'lemonway_payment_refund_details', $existing_history );
 
 		// store refund id as array, this will help track all partial refunds.
