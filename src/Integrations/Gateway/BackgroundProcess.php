@@ -230,11 +230,12 @@ class BackgroundProcess {
 
 					$message     = esc_html__( 'P2P transition has been unsuccessful!', 'lemonway' );
 					$log_message = sprintf(
-						'Lemonway settlement transition, Order ID: %s, Vendor ID: %s, Message: %s, API Response: %s',
+						'Lemonway settlement transition, Order ID: %s, Vendor ID: %s, Message: %s, API Response: %s, data: %s',
 						absint( $tmp_order_id ),
 						absint( $vendor_id ),
 						wp_strip_all_tags( $message ),
-						wp_json_encode( $payment_response )
+						wp_json_encode( $payment_response ),
+						wp_json_encode( $data, 'JSON_PRETTY_PRINT' )
 					);
 					Helper::log( $log_message, 'settlement p2p', 'info', 'lemonway-settlement' );
 					break;
@@ -255,12 +256,13 @@ class BackgroundProcess {
 
 				$message     = esc_html__( 'P2P transition has been successful!', 'lemonway' );
 				$log_message = sprintf(
-					'Lemonway settlement transition ID: %s, Order ID: %s, Vendor ID: %s, Message: %s, API Response: %s',
+					'Lemonway settlement transition ID: %s, Order ID: %s, Vendor ID: %s, Message: %s, API Response: %s, data: %s',
 					absint( $payment_response['transaction']['id'] ),
 					absint( $tmp_order_id ),
 					absint( $vendor_id ),
 					wp_strip_all_tags( $message ),
-					wp_json_encode( $payment_response )
+					wp_json_encode( $payment_response ),
+					wp_json_encode( $data, 'JSON_PRETTY_PRINT' )
 				);
 				Helper::log( $log_message, 'settlement p2p', 'info', 'lemonway-settlement' );
 

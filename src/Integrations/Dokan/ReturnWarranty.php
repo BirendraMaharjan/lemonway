@@ -127,7 +127,10 @@ class ReturnWarranty extends Dokan {
 	public function warrantyTypes( $type  ) {
 
 		unset( $type['addon_warranty'] );
-		unset( $type['no_warranty'] );
+		//unset( $type['no_warranty'] );
+
+		$type['no_warranty'] = __( 'No Refund', 'dokan' );
+		$type['included_warranty'] = __( 'Refund', 'dokan' );
 
 		return $type;
 	}
