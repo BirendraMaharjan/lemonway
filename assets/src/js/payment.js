@@ -19,10 +19,18 @@
 // Import the necessary functions from wp-i18n
 const { __ } = wp.i18n;
 jQuery(function ($) {
-	'use strict';
+	('use strict');
 
-	// Exit if not on checkout page.
-	if (!lemonway_payment.is_checkout_page) {
+	// Exit early if required params are missing or not on active checkout
+	if (!window.wc_checkout_params || !window.lemonway_payment) {
+		return;
+	}
+
+	// Only run on the active checkout page and is is_checkout_pay_page
+	if (
+		!lemonway_payment.is_checkout_pay_page &&
+		!lemonway_payment.is_checkout_page
+	) {
 		return;
 	}
 
@@ -426,7 +434,10 @@ jQuery(function ($) {
 					throw new Error('Hosted fields not initialized');
 				}
 				this.hostedFields.config.webkitToken = token;
-				await this.hostedFields.submit(true);
+				await this.hostedFields.submit();
+
+				//console.info(r);
+				//alert('Thanks for testing. Contact Lemonway to make it work on production!');
 
 				// Payment succeeded - redirect to success page
 				if (this.orderSuccessRedirectUrl) {

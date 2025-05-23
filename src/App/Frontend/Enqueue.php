@@ -126,25 +126,27 @@ class Enqueue extends Base {
 		if ( ! isset( $gateways['lemonway-gateway'] ) ) {
 			return;
 		}
+		//loading this scripts only in checkout page
+		if ( is_checkout_pay_page() || ( ! is_order_received_page() && is_checkout() ) ) {
+			global $wp;
+			// get order id if this is an order review page.
+			$order_id = isset( $wp->query_vars['order-pay'] ) ? $wp->query_vars['order-pay'] : null;
 
-		global $wp;
-		// get order id if this is an order review page.
-		$order_id = isset( $wp->query_vars['order-pay'] ) ? $wp->query_vars['order-pay'] : null;
+			wp_enqueue_script( 'lemonway-card-sdk' );
+			wp_enqueue_script( 'lemonway-paypal-sdk' );
+			wp_enqueue_script( 'lemonway-payment-js' );
 
-		wp_enqueue_script( 'lemonway-card-sdk' );
-		wp_enqueue_script( 'lemonway-paypal-sdk' );
-		wp_enqueue_script( 'lemonway-payment-js' );
+			$data = array(
+				'is_checkout_page'     => is_checkout(),
+				'lemonway_payment'     => true,
+				'nonce'                => wp_create_nonce( 'lemonway_checkout_nonce' ),
+				'is_checkout_pay_page' => is_checkout_pay_page(),
+				'order_id'             => $order_id,
+				'ajaxurl'              => admin_url( 'admin-ajax.php' ),
+			);
 
-		$data = array(
-			'is_checkout_page'     => is_checkout(),
-			'lemonway_payment'     => true,
-			'nonce'                => wp_create_nonce( 'lemonway_checkout_nonce' ),
-			'is_checkout_pay_page' => is_checkout_pay_page(),
-			'order_id'             => $order_id,
-			'ajaxurl'              => admin_url( 'admin-ajax.php' ),
-		);
-
-		// Localize the script with new data.
-		wp_localize_script( 'lemonway-payment-js', 'lemonway_payment', $data );
+			// Localize the script with new data.
+			wp_localize_script( 'lemonway-payment-js', 'lemonway_payment', $data );
+		}
 	}
 }

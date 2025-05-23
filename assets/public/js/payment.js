@@ -30,8 +30,13 @@ var __ = wp.i18n.__;
 jQuery(function ($) {
   'use strict';
 
-  // Exit if not on checkout page.
-  if (!lemonway_payment.is_checkout_page) {
+  // Exit early if required params are missing or not on active checkout
+  if (!window.wc_checkout_params || !window.lemonway_payment) {
+    return;
+  }
+
+  // Only run on the active checkout page and is is_checkout_pay_page
+  if (!lemonway_payment.is_checkout_pay_page && !lemonway_payment.is_checkout_page) {
     return;
   }
   var lemonwayHandler = {
@@ -418,6 +423,7 @@ jQuery(function ($) {
     submitCardPayment: function submitCardPayment(token) {
       var _this7 = this;
       return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var r;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) switch (_context5.prev = _context5.next) {
             case 0:
@@ -430,23 +436,27 @@ jQuery(function ($) {
             case 3:
               _this7.hostedFields.config.webkitToken = token;
               _context5.next = 6;
-              return _this7.hostedFields.submit(true);
+              return _this7.hostedFields.submit();
             case 6:
+              r = _context5.sent;
+              console.info(r);
+              //alert('Thanks for testing. Contact Lemonway to make it work on production!');
+
               // Payment succeeded - redirect to success page
               if (_this7.orderSuccessRedirectUrl) {
                 window.location.href = _this7.orderSuccessRedirectUrl;
               }
-              _context5.next = 12;
+              _context5.next = 14;
               break;
-            case 9:
-              _context5.prev = 9;
+            case 11:
+              _context5.prev = 11;
               _context5.t0 = _context5["catch"](0);
               throw new Error("Card payment failed: ".concat(_context5.t0.message));
-            case 12:
+            case 14:
             case "end":
               return _context5.stop();
           }
-        }, _callee5, null, [[0, 9]]);
+        }, _callee5, null, [[0, 11]]);
       }))();
     },
     /**
