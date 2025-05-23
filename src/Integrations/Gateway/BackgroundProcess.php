@@ -49,8 +49,8 @@ class BackgroundProcess {
 		add_action( 'lemonway_payment_p2p_transaction', array( $this, 'schedule_p2p_transaction' ) );
 		add_action( 'lemonway_payment_status_checking', array( $this, 'payment_status_checking' ) );
 
-		// add_action( 'wp_ajax_test_order_cron_hook', array( $this, 'schedule_p2p_transaction' ) );
-		// add_action( 'wp_ajax_nopriv_test_order_cron_hook', array( $this, 'schedule_p2p_transaction' ) );
+		//add_action( 'wp_ajax_test_order_cron_hook', array( $this, 'schedule_p2p_transaction' ) );
+		//add_action( 'wp_ajax_nopriv_test_order_cron_hook', array( $this, 'schedule_p2p_transaction' ) );
 	}
 
 
@@ -206,13 +206,13 @@ class BackgroundProcess {
 				$vendor_raw_earning = dokan()->commission->get_earning_by_order( $tmp_order, 'seller' );
 				$total_cost         = Helper::toCents( $tmp_order->get_total() );
 
-				$store_info = dokan_get_store_info( $vendor_id );
+				/*$store_info = dokan_get_store_info( $vendor_id );
 
 				// 19% extra commission for Germany vendor
 				$store_country = $store_info['address']['country'] ?? '';
 				if ( $store_country === 'DE' ) {
 					$vendor_raw_earning = $vendor_raw_earning + ( $vendor_raw_earning * 19 / 100 );
-				}
+				}*/
 
 				$data = array(
 					'debitAccountId'  => Helper::getTechnicalAccountId(),
@@ -227,7 +227,6 @@ class BackgroundProcess {
 
 					Errors::writeLogCron( $payment_response );
 
-
 					$message     = esc_html__( 'P2P transition has been unsuccessful!', 'lemonway' );
 					$log_message = sprintf(
 						'Lemonway settlement transition, Order ID: %s, Vendor ID: %s, Message: %s, API Response: %s, data: %s',
@@ -235,13 +234,27 @@ class BackgroundProcess {
 						absint( $vendor_id ),
 						wp_strip_all_tags( $message ),
 						wp_json_encode( $payment_response ),
-						wp_json_encode( $data, 'JSON_PRETTY_PRINT' )
+						wp_json_encode( $data )
 					);
-					Helper::log( $log_message, 'settlement p2p', 'info', 'lemonway-settlement' );
+					Helper::log( $log_message, 'settlement p2p', 'debug', 'lemonway-settlement' );
 					break;
 				}
 
 				if ( $payment_response['transaction']['status'] !== 3 ) {
+
+					Errors::writeLogCron( $payment_response );
+
+					$message     = esc_html__( 'P2P transition failed: status is not 3.', 'lemonway' );
+					$log_message = sprintf(
+						'Lemonway settlement transition, Order ID: %s, Vendor ID: %s, Message: %s, API Response: %s, data: %s',
+						absint( $tmp_order_id ),
+						absint( $vendor_id ),
+						wp_strip_all_tags( $message ),
+						wp_json_encode( $payment_response ),
+						wp_json_encode( $data )
+					);
+					Helper::log( $log_message, 'settlement p2p', 'debug', 'lemonway-settlement' );
+
 					continue;
 				}
 
@@ -262,7 +275,7 @@ class BackgroundProcess {
 					absint( $vendor_id ),
 					wp_strip_all_tags( $message ),
 					wp_json_encode( $payment_response ),
-					wp_json_encode( $data, 'JSON_PRETTY_PRINT' )
+					wp_json_encode( $data )
 				);
 				Helper::log( $log_message, 'settlement p2p', 'info', 'lemonway-settlement' );
 
