@@ -12,6 +12,8 @@ declare( strict_types=1 );
 namespace Lemonway\Integrations\Dokan;
 
 use Lemonway\Config\Plugin;
+use WC_Order;
+use WC_Order_Item;
 
 /**
  * Class Dokan
@@ -39,10 +41,18 @@ class GermanyCommission {
 	 */
 	public function init() {
 		// Hook into the Dokan admin commission filter.
-		add_filter( 'dokan_get_earning_by_order', array( $this, 'get_dokan_admin_commission_with_vat' ), 20, 2 );
+		//add_filter( 'dokan_get_earning_by_order', array( $this, 'get_dokan_admin_commission_with_vat' ), 20, 2 );
 
+		/*add_filter( 'add_extra_commission_for_germany', function ($setting){
+			$setting['percentage'] = 20;
+			return $setting;
+		}, 2);*/
+
+		add_filter( 'dokan_order_line_item_commission_settings_before_save', array( $this, 'addExtraCommissionGorGermany' ), 20, 2 );
 		// Hook into the template loading process to override the commission-meta-box-html.
 		add_filter( 'dokan_get_template_part', array( $this, 'overrideDokanAdminCommissionTemplates' ), 10, 2 );
+
+
 	}
 
 	/**
@@ -50,7 +60,80 @@ class GermanyCommission {
 	 */
 	public function __construct() {
 		$this->plugin = Plugin::init();
+		/*add_action('init', function (){
+			add_filter( 'dokan_order_line_item_commission_settings_before_save', array( $this, 'addExtraCommissionGorGermany' ), 20, 2 );
+		});*/
+
 	}
+
+	/**
+	 * Adds extra commission for vendors located in Germany.
+	 *
+	 * @param array           $setting Commission settings.
+	 * @param WC_Order_Item   $order   Order item object.
+	 *
+	 * @return array Modified commission settings.
+	 */
+	public function addExtraCommissionGorGermany( $setting, $order ) {
+
+		if ( ! is_array( $setting ) || ! is_a( $order, 'WC_Order_Item' ) ) {
+			return $setting;
+		}
+
+		// Check if commission already applied
+		$already_applied = $order->get_meta( '_germany_vendor_commission_applied', true );
+		if ( $already_applied ) {
+			return $setting;
+		}
+
+		// Get the main order
+		$main_order = $order->get_order();
+		if ( ! $main_order instanceof WC_Order ) {
+			return $setting;
+		}
+
+		$seller_id = dokan_get_seller_id_by_order( $main_order );
+		if ( empty( $seller_id ) ) {
+			return $setting;
+		}
+
+		$vendor = dokan()->vendor->get( $seller_id );
+		if ( ! $vendor || ! method_exists( $vendor, 'get_shop_info' ) ) {
+			return $setting;
+		}
+
+
+		$store_info = $vendor->get_shop_info();
+		// Base commission before increase
+		$base_commission = $setting['percentage'] ?? 0;
+		$base_flat_commission = $setting['flat'] ?? 0;
+		if ( ! empty( $store_info['address']['country'] ) && strtoupper( $store_info['address']['country'] ) === 'DE' ) {
+			$setting['percentage'] = round( $base_commission * 1.19, 2 );
+			$setting['flat'] = round( $base_flat_commission * 1.19, 2 );
+		}
+
+
+		// Save commission meta
+		$commission_data = array(
+			'applied'            => true,
+			'seller_id'          => $seller_id,
+			'country'            => $store_info['address']['country'] ?? '', // country at time of order
+			'order_id'           => $main_order->get_id(),
+			'order_item_id'      => $order->get_id(),
+			'commission'         => $base_commission,
+			'germany_commission' => $setting['percentage'],
+			'flat'               => $base_flat_commission,
+			'germany_flat'       => $setting['flat'],
+			'setting'            => $setting,
+		);
+
+		$order->update_meta_data( '_germany_vendor_commission', $commission_data );
+		$order->update_meta_data( '_germany_vendor_commission_applied', true ); // Flag so it doesn't re-run
+		$order->save_meta_data();
+
+		return $setting;
+	}
+
 
 
 	/**
@@ -79,6 +162,14 @@ class GermanyCommission {
 		$germany_commission = 0;
 		$total_commission = 0;
 
+		/*print_r($admin_commission);
+		echo "<br>";
+		print_r($earning_or_commission);
+		echo '</pre>';
+		print_r($order_total);
+
+		exit;*/
+
 		// Apply 19% commission of admin commission if the store is in Germany.
 		if ( isset( $store_info['address']['country'] ) && $store_info['address']['country'] === 'DE' ) {
 
@@ -96,7 +187,13 @@ class GermanyCommission {
 			'commission'         => $admin_commission,
 			'germany_commission' => $germany_commission,
 			'total_commission'   => $total_commission,
+			'earning_or_commission'   => $earning_or_commission,
 		);
+
+		/*echo "<pre>";
+			print_r($germany_commission_data);
+			print_r($earning_or_commission);
+		echo "</pre>"; exit;*/
 
 		// Update order meta-data with German vendor commission.
 		$order->update_meta_data( '_germany_vendor_commission', $germany_commission_data );
