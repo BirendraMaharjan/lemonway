@@ -73,7 +73,7 @@ class Withdraw extends Dokan {
 
 		if ( is_wp_error( $iban ) ) {
 
-			// Special handling for missing IBAN
+			// Special handling for missing IBAN.
 			if ( $iban->get_error_code() === 'lemonway_iban_retrieve_error' ) {
 				$this->displayLinkBankMessage();
 				return false;
@@ -83,7 +83,7 @@ class Withdraw extends Dokan {
 			return false;
 		}
 
-		// Check if any IBAN has status 5 (verified)
+		// Check if any IBAN has status 5 (verified).
 		$verified_ibans = array_filter(
 			$iban,
 			function ( $item ) {
@@ -92,11 +92,11 @@ class Withdraw extends Dokan {
 		);
 
 		if ( ! empty( $verified_ibans ) ) {
-			// Valid IBAN found, return result
-			return $result; // Note: You need to define $result in your actual code
+			// Valid IBAN found, return result.
+			return $result; // Note: You need to define $result in your actual code.
 		}
 
-		// IBAN exists but is not verified
+		// IBAN exists but is not verified.
 		printf(
 			'<p class="iban-status">%s</p>',
 			esc_html__( 'IBAN has not been verified yet.', 'lemonway' )
@@ -110,8 +110,8 @@ class Withdraw extends Dokan {
 	 */
 	public function displayLinkBankMessage() {
 		esc_html_e( 'Please connect your bank account first.', 'lemonway' );
-		$bank_link_url = esc_url( dokan_get_navigation_url( 'settings/payment-manage-lemonway-edit' ) . '?link-bank' );
-		echo '<br><a href="' . $bank_link_url . '">' . esc_html__( 'Link Bank', 'lemonway' ) . '</a>';
+		$bank_link_url = dokan_get_navigation_url( 'settings/payment-manage-lemonway-edit' ) . '?link-bank';
+		echo '<br><a href="' . esc_url( $bank_link_url ) . '">' . esc_html__( 'Link Bank', 'lemonway' ) . '</a>';
 	}
 
 	public function processWithdraw( $result, $args ) {

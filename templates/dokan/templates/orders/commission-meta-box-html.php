@@ -83,7 +83,7 @@ foreach ( $order->get_refunds() as $refund ) {
 					$commission_type_html = $all_commission_types[ $commission_type ] ?? '';
 					?>
 					<tr class="item  <?php echo esc_attr( $row_class ); ?>"
-						data-order_item_id="<?php echo $item->get_id(); ?>">
+						data-order_item_id="<?php echo esc_attr( $item->get_id() ); ?>">
 						<td class="thumb">
 							<div class="wc-order-item-thumbnail"> <?php echo wp_kses_post( $thumbnail ); ?> </div>
 						</td>
@@ -141,10 +141,20 @@ foreach ( $order->get_refunds() as $refund ) {
 						</td>
 						<td width="1%" style="min-width: 210px">
 							<div class="view"
-								title="<?php echo esc_html( sprintf( __( 'Source: %s', 'lemonway' ), $commission_data->get_settings()->get_source() ) ); ?>">
+								title="
+								<?php
+								echo esc_html(
+									sprintf(
+									// translators: %s is the source name.
+										__( 'Source: %s', 'lemonway' ),
+										esc_html( $commission_data->get_settings()->get_source() )
+									)
+								);
+								?>
+										">
 
 								<?php echo esc_html( $commission_data->get_settings()->get_percentage() ); ?>%&nbsp;+&nbsp;
-								<?php echo wc_price( $commission_data->get_settings()->get_flat() ); ?>
+								<?php echo wp_kses_post( wc_price( $commission_data->get_settings()->get_flat() ) ); ?>
 
 
 							</div>
@@ -155,14 +165,26 @@ foreach ( $order->get_refunds() as $refund ) {
 									if ( isset( $germany_vendor_commission['germany_commission'] ) &&
 										$germany_vendor_commission['commission'] !== $germany_vendor_commission['germany_commission']
 									) {
-										echo '(' . $germany_vendor_commission['commission'] . '% + 19% of ' . $germany_vendor_commission['commission'] . '%)';
+										printf(
+										// translators: %1$s and %2$s are commission percentages before tax.
+											esc_html__( '(%1$s%% + 19%% of %2$s%%)', 'lemonway' ),
+											esc_html( $germany_vendor_commission['commission'] ),
+											esc_html( $germany_vendor_commission['commission'] )
+										);
+
 									}
 
 									if (
 										isset( $germany_vendor_commission['germany_flat'] ) &&
-										$germany_vendor_commission['flat'] != $germany_vendor_commission['germany_flat']
+										$germany_vendor_commission['flat'] !== $germany_vendor_commission['germany_flat']
 									) {
-										echo ' + (' . $germany_vendor_commission['flat'] . ' + 19% of ' . $germany_vendor_commission['flat'] . ')';
+										printf(
+										// translators: %1$s and %2$s are the fixed commission amounts before tax.
+											esc_html__( ' + (%1$s + 19%% of %2$s)', 'lemonway' ),
+											esc_html( $germany_vendor_commission['flat'] ),
+											esc_html( $germany_vendor_commission['flat'] )
+										);
+
 									}
 								}
 								?>
@@ -189,11 +211,13 @@ foreach ( $order->get_refunds() as $refund ) {
 								?>
 								<bdi>
 									<?php
-									echo wc_price(
-										$original_commission,
-										array(
-											'currency' => $order->get_currency(),
-											'decimals' => wc_get_price_decimals(),
+									echo wp_kses_post(
+										wc_price(
+											$original_commission,
+											array(
+												'currency' => $order->get_currency(),
+												'decimals' => wc_get_price_decimals(),
+											)
 										)
 									);
 									?>
@@ -213,11 +237,13 @@ foreach ( $order->get_refunds() as $refund ) {
 					<td width="1%"></td>
 					<td class="total">
 						<?php
-						echo wc_price(
-							$order_total,
-							array(
-								'currency' => $order->get_currency(),
-								'decimals' => wc_get_price_decimals(),
+						echo wp_kses_post(
+							wc_price(
+								$order_total,
+								array(
+									'currency' => $order->get_currency(),
+									'decimals' => wc_get_price_decimals(),
+								)
 							)
 						);
 						?>
@@ -228,11 +254,13 @@ foreach ( $order->get_refunds() as $refund ) {
 					<td width="1%"></td>
 					<td class="total">
 						<?php
-						echo wc_price(
-							$order_commission->get_vendor_earning(),
-							array(
-								'currency' => $order->get_currency(),
-								'decimals' => wc_get_price_decimals(),
+						echo wp_kses_post(
+							wc_price(
+								$order_commission->get_vendor_earning(),
+								array(
+									'currency' => $order->get_currency(),
+									'decimals' => wc_get_price_decimals(),
+								)
 							)
 						);
 						?>
@@ -244,11 +272,13 @@ foreach ( $order->get_refunds() as $refund ) {
 						<td width="1%"></td>
 						<td class="total">
 							<?php
-							echo wc_price(
-								$order_commission->get_admin_subsidy(),
-								array(
-									'currency' => $order->get_currency(),
-									'decimals' => wc_get_price_decimals(),
+							echo wp_kses_post(
+								wc_price(
+									$order_commission->get_admin_subsidy(),
+									array(
+										'currency' => $order->get_currency(),
+										'decimals' => wc_get_price_decimals(),
+									)
 								)
 							);
 							?>
@@ -261,11 +291,13 @@ foreach ( $order->get_refunds() as $refund ) {
 						<td width="1%"></td>
 						<td class="total">
 							<?php
-							echo wc_price(
-								$shipping_fee,
-								array(
-									'currency' => $order->get_currency(),
-									'decimals' => wc_get_price_decimals(),
+							echo wp_kses_post(
+								wc_price(
+									$shipping_fee,
+									array(
+										'currency' => $order->get_currency(),
+										'decimals' => wc_get_price_decimals(),
+									)
 								)
 							);
 							?>
@@ -274,11 +306,13 @@ foreach ( $order->get_refunds() as $refund ) {
 								?>
 								<small class="refunded refunded-recipient">
 									<?php
-									echo wc_price(
-										$shipping_fee_refunded,
-										array(
-											'currency' => $order->get_currency(),
-											'decimals' => wc_get_price_decimals(),
+									echo wp_kses_post(
+										wc_price(
+											$shipping_fee_refunded,
+											array(
+												'currency' => $order->get_currency(),
+												'decimals' => wc_get_price_decimals(),
+											)
 										)
 									);
 									?>
@@ -295,11 +329,13 @@ foreach ( $order->get_refunds() as $refund ) {
 						<td width="1%"></td>
 						<td class="total">
 							<?php
-							echo wc_price(
-								$product_tax_fee,
-								array(
-									'currency' => $order->get_currency(),
-									'decimals' => wc_get_price_decimals(),
+							echo wp_kses_post(
+								wc_price(
+									$product_tax_fee,
+									array(
+										'currency' => $order->get_currency(),
+										'decimals' => wc_get_price_decimals(),
+									)
 								)
 							);
 							?>
@@ -308,11 +344,13 @@ foreach ( $order->get_refunds() as $refund ) {
 								?>
 								<small class="refunded refunded-recipient">
 									<?php
-									echo wc_price(
-										$product_tax_fee_refunded,
-										array(
-											'currency' => $order->get_currency(),
-											'decimals' => wc_get_price_decimals(),
+									echo wp_kses_post(
+										wc_price(
+											$product_tax_fee_refunded,
+											array(
+												'currency' => $order->get_currency(),
+												'decimals' => wc_get_price_decimals(),
+											)
 										)
 									);
 									?>
@@ -329,11 +367,13 @@ foreach ( $order->get_refunds() as $refund ) {
 						<td width="1%"></td>
 						<td class="total">
 							<?php
-							echo wc_price(
-								$shipping_tax_fee,
-								array(
-									'currency' => $order->get_currency(),
-									'decimals' => wc_get_price_decimals(),
+							echo wp_kses_post(
+								wc_price(
+									$shipping_tax_fee,
+									array(
+										'currency' => $order->get_currency(),
+										'decimals' => wc_get_price_decimals(),
+									)
 								)
 							);
 							?>
@@ -342,11 +382,13 @@ foreach ( $order->get_refunds() as $refund ) {
 								?>
 								<small class="refunded refunded-recipient">
 									<?php
-									echo wc_price(
-										$shipping_tax_fee_refunded,
-										array(
-											'currency' => $order->get_currency(),
-											'decimals' => wc_get_price_decimals(),
+									echo wp_kses_post(
+										wc_price(
+											$shipping_tax_fee_refunded,
+											array(
+												'currency' => $order->get_currency(),
+												'decimals' => wc_get_price_decimals(),
+											)
 										)
 									);
 									?>
@@ -363,11 +405,13 @@ foreach ( $order->get_refunds() as $refund ) {
 						<td width="1%"></td>
 						<td class="total">
 							<?php
-							echo wc_price(
-								- 1 * $order_commission->get_admin_gateway_fee(),
-								array(
-									'currency' => $order->get_currency(),
-									'decimals' => wc_get_price_decimals(),
+							echo wp_kses_post(
+								wc_price(
+									- 1 * $order_commission->get_admin_gateway_fee(),
+									array(
+										'currency' => $order->get_currency(),
+										'decimals' => wc_get_price_decimals(),
+									)
 								)
 							);
 							?>
@@ -388,11 +432,13 @@ foreach ( $order->get_refunds() as $refund ) {
 					<td width="1%"></td>
 					<td class="total">
 						<?php
-						echo wc_price(
-							$order_commission->get_admin_commission(),
-							array(
-								'currency' => $order->get_currency(),
-								'decimals' => wc_get_price_decimals(),
+						echo wp_kses_post(
+							wc_price(
+								$order_commission->get_admin_commission(),
+								array(
+									'currency' => $order->get_currency(),
+									'decimals' => wc_get_price_decimals(),
+								)
 							)
 						);
 						?>

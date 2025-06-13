@@ -32,11 +32,11 @@ if ( is_wp_error( $lemonway_linked_banks ) || ! $lemonway_linked_banks ) {
 	foreach ( $lemonway_linked_banks as $key => $value ) :
 		?>
 		<li>
-			<!--<div class="link-account-status">
+			<!-- phpcs:disable <div class="link-account-status">
 				<button class="link-account-deactivate" data-id="<?php /*echo $value['id'] */ ?>">
 					<?php /*esc_html_e( 'Deactivate', 'lemonway' ); */ ?>
 				</button>
-			</div>-->
+			</div> phpcs:enable -->
 			<p><strong><?php esc_html_e( 'Id: ', 'lemonway' ); ?></strong> <?php echo esc_html( $value['id'] ); ?> </p>
 			<p>
 				<strong><?php esc_html_e( 'Status: ', 'lemonway' ); ?></strong> <?php echo esc_html( $lemonway_dokan->lemonway_api->ibanStatus( $value['status'] ) ); ?>

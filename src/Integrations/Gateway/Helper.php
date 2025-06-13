@@ -410,18 +410,18 @@ class Helper {
 			? wp_json_encode( $message, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT )
 			: (string) $message;
 
-		// Create meaningful log message with category prefix if available
+		// Create meaningful log message with category prefix if available.
 		$formatted_message = ! empty( $category )
 			? "[{$category}] {$data}"
 			: $data;
 
-		// Set context for log entry
+		// Set context for log entry.
 		$context = array(
 			'source'    => $source,
 			'backtrace' => true,
 		);
 
-		// Log the message with appropriate level
+		// Log the message with appropriate level.
 		$logger->log( $level, $formatted_message, $context );
 	}
 

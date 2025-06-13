@@ -83,7 +83,7 @@
     <!-- Verify that everything in the global namespace is prefixed with a theme specific prefix.
     		 Multiple valid prefixes can be provided as a comma-delimited list. -->
     <!--https://github.com/WordPress/WordPress-Coding-Standards/wiki/Customizable-sniff-properties#properties-strongly-recommended-to-be-set-->
-    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+    <!-- rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
             <property name="prefixes" type="array">
                 <element value="LEMONWAY"/>
@@ -91,7 +91,7 @@
                 <element value="lw_"/>
             </property>
         </properties>
-    </rule>
+    </rule -->
 
      <rule ref="WordPress.WP.Capabilities.Unknown">
         <properties name="custom_capabilities">

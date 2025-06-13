@@ -69,12 +69,12 @@ $current_reasons        = array();
 					<?php endif ?>
 				</th>
 				<td><a href="<?php echo esc_url( $_product->get_permalink() ); ?>"><?php echo esc_html( $_product->get_title() ); ?></a></td>
-				<td><?php echo $_product->get_price_html(); ?></td>
+				<td><?php echo wp_kses_post( $_product->get_price_html() ); ?></td>
 				<td>
 					<?php
 					$author = get_post_field( 'post_author', $_product->get_id() );
 					$vendor = dokan()->vendor->get( $author );
-					echo '<a href="' . $vendor->get_shop_url() . '">' . $vendor->get_shop_name() . '</a>';
+					echo '<a href="' . esc_url( $vendor->get_shop_url() ) . '">' . esc_html( $vendor->get_shop_name() ) . '</a>';
 					?>
 				</td>
 				<td>
@@ -85,7 +85,7 @@ $current_reasons        = array();
 						<select name="request_item_qty[]" id="request_item_qty[]">
 							<?php
 							for ( $i = 1; $i <= $item_quantity; $i++ ) {
-								echo '<option value="' . $i . '">' . $i . '</option>';
+								echo '<option value="' . esc_attr( $i ) . '">' . esc_html( $i ) . '</option>';
 							}
 							?>
 						</select>
@@ -97,7 +97,7 @@ $current_reasons        = array();
 				<td>
 					<?php
 					$warranty = dokan_get_order_item_warranty( $item );
-					echo dokan_get_warranty_duration_string( $warranty, $order );
+					echo wp_kses_post( dokan_get_warranty_duration_string( $warranty, $order ) );
 					?>
 				</td>
 			</tr>
