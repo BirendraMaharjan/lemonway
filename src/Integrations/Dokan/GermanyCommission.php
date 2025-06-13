@@ -40,30 +40,11 @@ class GermanyCommission {
 	 * @since 1.0.0
 	 */
 	public function init() {
-		// Hook into the Dokan admin commission filter.
-		//add_filter( 'dokan_get_earning_by_order', array( $this, 'get_dokan_admin_commission_with_vat' ), 20, 2 );
+		$this->plugin = Plugin::init();
 
-		/*add_filter( 'add_extra_commission_for_germany', function ($setting){
-			$setting['percentage'] = 20;
-			return $setting;
-		}, 2);*/
-
-		add_filter( 'dokan_order_line_item_commission_settings_before_save', array( $this, 'addExtraCommissionGorGermany' ), 20, 2 );
+		//add_filter( 'dokan_order_line_item_commission_settings_before_save', array( $this, 'addExtraCommissionGorGermany' ), 20, 2 );
 		// Hook into the template loading process to override the commission-meta-box-html.
 		add_filter( 'dokan_get_template_part', array( $this, 'overrideDokanAdminCommissionTemplates' ), 10, 2 );
-
-
-	}
-
-	/**
-	 * Sets up a new HTML widget instance.
-	 */
-	public function __construct() {
-		$this->plugin = Plugin::init();
-		/*add_action('init', function (){
-			add_filter( 'dokan_order_line_item_commission_settings_before_save', array( $this, 'addExtraCommissionGorGermany' ), 20, 2 );
-		});*/
-
 	}
 
 	/**
@@ -81,7 +62,7 @@ class GermanyCommission {
 		}
 
 		// Check if commission already applied
-		$already_applied = $order->get_meta( '_germany_vendor_commission_applied', true );
+		$already_applied = $order->get_meta( '_santerris_germany_vendor_commission_applied', true );
 		if ( $already_applied ) {
 			return $setting;
 		}
@@ -105,14 +86,15 @@ class GermanyCommission {
 
 		$store_info = $vendor->get_shop_info();
 		// Base commission before increase
-		$base_commission = $setting['percentage'] ?? 0;
-		$base_flat_commission = $setting['flat'] ?? 0;
+		$base_commission = floatval( $setting['percentage'] ?? 0 );
+		$base_flat_commission = floatval( $setting['flat'] ?? 0 );
 		if ( ! empty( $store_info['address']['country'] ) && strtoupper( $store_info['address']['country'] ) === 'DE' ) {
 			$setting['percentage'] = round( $base_commission * 1.19, 2 );
 			$setting['flat'] = round( $base_flat_commission * 1.19, 2 );
 		}
 
-
+		$base_commission = floatval( $setting['percentage'] ?? 0 );
+		$base_flat_commission = floatval( $setting['flat'] ?? 0 );
 		// Save commission meta
 		$commission_data = array(
 			'applied'            => true,
@@ -124,83 +106,22 @@ class GermanyCommission {
 			'germany_commission' => $setting['percentage'],
 			'flat'               => $base_flat_commission,
 			'germany_flat'       => $setting['flat'],
-			'setting'            => $setting,
+			'setting'            => $setting
 		);
 
-		$order->update_meta_data( '_germany_vendor_commission', $commission_data );
-		$order->update_meta_data( '_germany_vendor_commission_applied', true ); // Flag so it doesn't re-run
+
+		$new = get_post_meta( $order->get_order_id(), '_germany_vendor_commission', true );
+		if ( ! isset( $new['country'] ) ) {
+			$commission_data['note'] = 'Before commission functionality was applied';
+		}
+
+		$order->update_meta_data( '_santerris_germany_vendor_commission_data', $commission_data );
+		$order->update_meta_data( '_santerris_germany_vendor_commission_applied', true ); // Flag so it doesn't re-run
 		$order->save_meta_data();
 
 		return $setting;
 	}
 
-
-
-	/**
-	 * Calculate admin commission with VAT for German vendors.
-	 *
-	 * @param float    $earning_or_commission Original commission value.
-	 * @param WC_Order $order The WooCommerce order.
-	 *
-	 * @return float Adjusted earning or commission.
-	 */
-	public function get_dokan_admin_commission_with_vat( $earning_or_commission, $order ) {
-		// Get the vendor ID.
-		$seller_id = dokan_get_seller_id_by_order( $order );
-		if ( ! $seller_id ) {
-			return $earning_or_commission;
-		}
-
-		$vendor     = dokan()->vendor->get( $seller_id );
-		$store_info = $vendor->get_shop_info();
-
-		// Get full order total (excluding refunds).
-		$order_total = (float) $order->get_total();
-
-		// Calculate admin commission before VAT.
-		$admin_commission = $order_total - $earning_or_commission;
-		$germany_commission = 0;
-		$total_commission = 0;
-
-		/*print_r($admin_commission);
-		echo "<br>";
-		print_r($earning_or_commission);
-		echo '</pre>';
-		print_r($order_total);
-
-		exit;*/
-
-		// Apply 19% commission of admin commission if the store is in Germany.
-		if ( isset( $store_info['address']['country'] ) && $store_info['address']['country'] === 'DE' ) {
-
-			$germany_commission = $admin_commission * 0.19;
-			$total_commission  = $admin_commission + $germany_commission;
-
-			// Final earning = order total - (admin commission + 19 % german commission of admin commission).
-			$earning_or_commission = $order_total - $total_commission;
-		}
-
-		$germany_commission_data = array(
-			'seller_id' => $seller_id,
-			'country' => $store_info['address']['country'],
-			'total_order' => $order_total,
-			'commission'         => $admin_commission,
-			'germany_commission' => $germany_commission,
-			'total_commission'   => $total_commission,
-			'earning_or_commission'   => $earning_or_commission,
-		);
-
-		/*echo "<pre>";
-			print_r($germany_commission_data);
-			print_r($earning_or_commission);
-		echo "</pre>"; exit;*/
-
-		// Update order meta-data with German vendor commission.
-		$order->update_meta_data( '_germany_vendor_commission', $germany_commission_data );
-		$order->save();
-
-		return $earning_or_commission;
-	}
 
 	/**
 	 * Override the Dokan template to load the custom commission meta box HTML.

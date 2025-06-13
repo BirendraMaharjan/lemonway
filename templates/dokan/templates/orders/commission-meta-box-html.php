@@ -77,7 +77,7 @@ foreach ( $order->get_refunds() as $refund ) {
 					$commission_type           = '';
 					$admin_commission          = '';
 					$commission_data           = $order_commission->get_commission_for_line_item( $item_id );
-					$germany_vendor_commission = $item->get_meta( '_germany_vendor_commission' );
+					$germany_vendor_commission = $item->get_meta( '_santerris_germany_vendor_commission_data' );
 
 
 					$commission_type_html = $all_commission_types[ $commission_type ] ?? '';
@@ -136,7 +136,7 @@ foreach ( $order->get_refunds() as $refund ) {
 						</td>
 						<td width="1%">
 							<div class="view">
-								<bdi><?php echo esc_html( $germany_vendor_commission['country'] ); ?></bdi>
+								<bdi><?php echo esc_html( $germany_vendor_commission['country']??'' ); ?></bdi>
 							</div>
 						</td>
 						<td width="1%" style="min-width: 210px">
@@ -151,20 +151,16 @@ foreach ( $order->get_refunds() as $refund ) {
 							<div class="view">
 								<?php
 
-
-								/*	echo "<pre>";
-										print_r($germany_vendor_commission);
-									echo "</pre>";*/
-
 								if ( isset( $germany_vendor_commission['applied'] ) ) {
-									if (
-										$germany_vendor_commission['commission'] !== $germany_vendor_commission['germany_commission']
+									if (isset($germany_vendor_commission['germany_commission']) &&
+									    $germany_vendor_commission['commission'] !== $germany_vendor_commission['germany_commission']
 									) {
 										echo "(" . $germany_vendor_commission['commission'] . '% + 19% of ' . $germany_vendor_commission['commission'] . "%)";
 									}
 
 									if (
-										$germany_vendor_commission['flat'] !== $germany_vendor_commission['germany_flat']
+										isset($germany_vendor_commission['germany_flat']) &&
+										$germany_vendor_commission['flat'] != $germany_vendor_commission['germany_flat']
 									) {
 										echo " + (" . $germany_vendor_commission['flat'] . ' + 19% of ' . $germany_vendor_commission['flat'] . ")";
 									}
