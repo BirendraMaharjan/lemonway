@@ -163,7 +163,6 @@ class Refund extends Dokan {
 	 * @param object $refund refund.
 	 *
 	 * @return void
-	 * @throws \Exception
 	 */
 	public function processRefund( $refund ) {
 		// Get code editor suggestion on refund object.
@@ -263,16 +262,21 @@ class Refund extends Dokan {
 		}
 
 		$balance = $this->account->getDetails( $merchant_id, 'balance' );
-		$refund->set_refund_reason( '$message' )->cancel();
+		// $refund->set_refund_reason( $message )->cancel();
 
 		if ( $balance < $refund->get_refund_amount() ) {
 
 			$message  = esc_html__( 'Refund has been canceled.', 'lemonway' );
 			$message .= ' ';
 			$message .= esc_html__( 'Reason: ', 'lemonway' );
-			$message .= sprintf( __( 'Amount is more than your Lemonway account balance (Lemonway balance: %s).', 'lemonway' ), html_entity_decode( strip_tags( wc_price( floatval( $balance / 100 ) ) ) ) );
+			$message .= sprintf(
+			// translators: %s: Lemonway account balance formatted as a currency string.
+				__( 'Amount is more than your Lemonway account balance (Lemonway balance: %s).', 'lemonway' ),
+				html_entity_decode( wp_strip_all_tags( wc_price( floatval( $balance / 100 ) ) ) )
+			);
 
 			$log_message = sprintf(
+			// translators: %1$s: Refund ID, %2$s: Order ID, %3$s: Vendor ID, %4$s: Message, %5$s: API Response.
 				__( 'Refund ID: %1$s, Order ID: %2$s, Vendor ID: %3$s, Message: %4$s, API Response: %5$s', 'lemonway' ),
 				absint( $refund->get_id() ),
 				absint( $refund->get_order_id() ),

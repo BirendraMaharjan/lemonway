@@ -20,7 +20,7 @@ $current_reasons        = array();
 <?php wc_print_notices(); ?>
 
 <h3>
-	<?php esc_html_e( 'Store Name: ', 'dokan' ); ?>
+	<?php esc_html_e( 'Store Name: ', 'lemonway' ); ?>
 	<a href="<?php echo esc_url( $store_url ); ?>" target="_blank"><?php echo esc_html( $store_name ); ?></a>
 </h3>
 
@@ -29,11 +29,11 @@ $current_reasons        = array();
 		<thead>
 		<tr>
 			<th></th>
-			<th><?php esc_html_e( 'Product Name', 'dokan' ); ?></th>
-			<th><?php esc_html_e( 'Price', 'dokan' ); ?></th>
-			<th><?php esc_html_e( 'Vendor', 'dokan' ); ?></th>
-			<th><?php esc_html_e( 'Qty', 'dokan' ); ?></th>
-			<th><?php esc_html_e( 'Return/Refund Details', 'dokan' ); ?></th>
+			<th><?php esc_html_e( 'Product Name', 'lemonway' ); ?></th>
+			<th><?php esc_html_e( 'Price', 'lemonway' ); ?></th>
+			<th><?php esc_html_e( 'Vendor', 'lemonway' ); ?></th>
+			<th><?php esc_html_e( 'Qty', 'lemonway' ); ?></th>
+			<th><?php esc_html_e( 'Return/Refund Details', 'lemonway' ); ?></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -55,11 +55,11 @@ $current_reasons        = array();
 			$has_warranty  = $warranty_item->has_warranty();
 
 			if ( $has_warranty ) {
-				$count_warranty_product++;
+				++$count_warranty_product;
 				$current_reasons = $warranty_item->get_reasons();
 			}
 
-			$count_general_product++;
+			++$count_general_product;
 			?>
 			<tr>
 				<th>
@@ -90,7 +90,7 @@ $current_reasons        = array();
 							?>
 						</select>
 					<?php else : ?>
-						<p><?php esc_html_e( 'Quantity Unavailable', 'dokan' ); ?></p>
+						<p><?php esc_html_e( 'Quantity Unavailable', 'lemonway' ); ?></p>
 					<?php endif ?>
 				</td>
 
@@ -107,7 +107,7 @@ $current_reasons        = array();
 
 	<?php if ( $count_warranty_product ) : ?>
 		<div class="warranty-form-row">
-			<label for=""><?php esc_html_e( 'I want to request for a', 'dokan' ); ?></label>
+			<label for=""><?php esc_html_e( 'I want to request for a', 'lemonway' ); ?></label>
 			<select name="type" id="type">
 				<?php foreach ( dokan_warranty_request_type() as $type_key => $type_value ) : ?>
 					<option value="<?php echo esc_attr( $type_key ); ?>"><?php echo esc_html( $type_value ); ?></option>
@@ -121,10 +121,11 @@ $current_reasons        = array();
 		?>
 		<?php if ( ! empty( $store_warranty ) ) : ?>
 			<div class="warranty-form-row">
-				<label for=""><?php esc_html_e( 'Select reason to request for warranty', 'dokan' ); ?></label>
+				<label for=""><?php esc_html_e( 'Select reason to request for warranty', 'lemonway' ); ?></label>
 				<select name="reasons" id="reasons">
 					<?php foreach ( $default_reasons as $key => $reason ) : ?>
-						<?php if ( in_array( $key, $store_warranty, true ) ) :
+						<?php
+						if ( in_array( $key, $store_warranty, true ) ) :
 							$reason = apply_filters( 'dokan_pro_rma_reason', $reason );
 							?>
 							<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $reason ); ?></option>
@@ -136,7 +137,7 @@ $current_reasons        = array();
 		<?php endif ?>
 
 		<div class="warranty-form-row">
-			<label for=""><?php esc_html_e( 'Tell details about your problem', 'dokan' ); ?></label>
+			<label for=""><?php esc_html_e( 'Tell details about your problem', 'lemonway' ); ?></label>
 			<textarea name="details" id="warranty_request_details" rows="6"></textarea>
 		</div>
 
@@ -144,14 +145,14 @@ $current_reasons        = array();
 			<input type="hidden" name="order_id" value="<?php echo esc_attr( $order->get_id() ); ?>">
 			<input type="hidden" name="vendor_id" value="<?php echo esc_attr( $vendor->get_id() ); ?>">
 			<?php wp_nonce_field( 'dokan_save_warranty_request', 'dokan_save_warranty_request_nonce' ); ?>
-			<input type="submit" name="warranty_submit_request" class="dokan-btn dokan-btn-theme" value="<?php esc_attr_e( 'Submit Request', 'dokan' ); ?>">
+			<input type="submit" name="warranty_submit_request" class="dokan-btn dokan-btn-theme" value="<?php esc_attr_e( 'Submit Request', 'lemonway' ); ?>">
 		</div>
 
 	<?php endif ?>
 
 	<?php if ( ! $count_general_product ) : ?>
 		<div class="warranty-no-product-row">
-			<p><?php esc_html_e( 'Product not found!', 'dokan' ); ?></p>
+			<p><?php esc_html_e( 'Product not found!', 'lemonway' ); ?></p>
 		</div>
 	<?php endif ?>
 

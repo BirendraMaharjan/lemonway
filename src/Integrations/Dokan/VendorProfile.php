@@ -555,7 +555,7 @@ class VendorProfile extends Dokan {
 
 	public function DeactivateLinkBankAccount() {
 
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field ( wp_unslash( $_POST['nonce'] ) ), 'lemonway-ajax-nonce' ) ) {
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'lemonway-ajax-nonce' ) ) {
 			wp_send_json_error( array( 'message' => esc_html__( 'Nonce verification failed.', 'lemonway' ) ) );
 
 			return; // Stop execution if nonce verification fails.

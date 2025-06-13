@@ -406,24 +406,23 @@ class Helper {
 		$logger = wc_get_logger();
 
 		// Prepare message content.
-		$data = is_array($message) || is_object($message)
-			? wp_json_encode($message, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+		$data = is_array( $message ) || is_object( $message )
+			? wp_json_encode( $message, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT )
 			: (string) $message;
 
-
 		// Create meaningful log message with category prefix if available
-		$formatted_message = !empty($category)
+		$formatted_message = ! empty( $category )
 			? "[{$category}] {$data}"
 			: $data;
 
 		// Set context for log entry
 		$context = array(
-			'source' => $source,
+			'source'    => $source,
 			'backtrace' => true,
 		);
 
 		// Log the message with appropriate level
-		$logger->log($level, $formatted_message, $context);
+		$logger->log( $level, $formatted_message, $context );
 	}
 
 	public static function getRefundIdsByOrderKey( $test_mode = null ) {

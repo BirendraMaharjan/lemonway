@@ -50,10 +50,10 @@ class Iban extends Api {
 		}
 
 		// Validate response data
-		if (empty($response['ibans']) || empty($response['ibans'][0]['id'])) {
+		if ( empty( $response['ibans'] ) || empty( $response['ibans'][0]['id'] ) ) {
 			return new WP_Error(
 				'lemonway_iban_retrieve_error',
-				esc_html__('IBAN not found for this account.', 'lemonway'),
+				esc_html__( 'IBAN not found for this account.', 'lemonway' ),
 				$response
 			);
 		}
@@ -87,7 +87,7 @@ class Iban extends Api {
 				'bic'            => $data['iban_bic_code'],
 				'iban'           => $data['iban_number'],
 				'domiciliation1' => $data['iban_bank_address_line_1'],
-				//'domiciliation2' => $data['iban_bank_address_line_2'],
+				// 'domiciliation2' => $data['iban_bank_address_line_2'],
 			),
 		);
 

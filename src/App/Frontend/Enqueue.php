@@ -126,7 +126,8 @@ class Enqueue extends Base {
 		if ( ! isset( $gateways['lemonway-gateway'] ) ) {
 			return;
 		}
-		//loading this scripts only in checkout page
+
+		// loading this scripts only in checkout page.
 		if ( is_checkout_pay_page() || ( ! is_order_received_page() && is_checkout() ) ) {
 			global $wp;
 			// get order id if this is an order review page.

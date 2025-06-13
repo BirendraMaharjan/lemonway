@@ -74,7 +74,7 @@ class Withdraw extends Dokan {
 		if ( is_wp_error( $iban ) ) {
 
 			// Special handling for missing IBAN
-			if ($iban->get_error_code() === 'lemonway_iban_retrieve_error') {
+			if ( $iban->get_error_code() === 'lemonway_iban_retrieve_error' ) {
 				$this->displayLinkBankMessage();
 				return false;
 			}
@@ -84,11 +84,14 @@ class Withdraw extends Dokan {
 		}
 
 		// Check if any IBAN has status 5 (verified)
-		$verified_ibans = array_filter($iban, function($item) {
-			return isset($item['status']) && $item['status'] === 5;
-		});
+		$verified_ibans = array_filter(
+			$iban,
+			function ( $item ) {
+				return isset( $item['status'] ) && $item['status'] === 5;
+			}
+		);
 
-		if (!empty($verified_ibans)) {
+		if ( ! empty( $verified_ibans ) ) {
 			// Valid IBAN found, return result
 			return $result; // Note: You need to define $result in your actual code
 		}
@@ -96,7 +99,7 @@ class Withdraw extends Dokan {
 		// IBAN exists but is not verified
 		printf(
 			'<p class="iban-status">%s</p>',
-			esc_html__('IBAN has not been verified yet.', 'lemonway')
+			esc_html__( 'IBAN has not been verified yet.', 'lemonway' )
 		);
 
 		return false;
@@ -106,9 +109,9 @@ class Withdraw extends Dokan {
 	 * Display message prompting user to link their bank account.
 	 */
 	public function displayLinkBankMessage() {
-		esc_html_e('Please connect your bank account first.', 'lemonway');
-		$bank_link_url = esc_url(dokan_get_navigation_url('settings/payment-manage-lemonway-edit') . '?link-bank');
-		echo '<br><a href="' . $bank_link_url . '">' . esc_html__('Link Bank', 'lemonway') . '</a>';
+		esc_html_e( 'Please connect your bank account first.', 'lemonway' );
+		$bank_link_url = esc_url( dokan_get_navigation_url( 'settings/payment-manage-lemonway-edit' ) . '?link-bank' );
+		echo '<br><a href="' . $bank_link_url . '">' . esc_html__( 'Link Bank', 'lemonway' ) . '</a>';
 	}
 
 	public function processWithdraw( $result, $args ) {
@@ -142,7 +145,7 @@ class Withdraw extends Dokan {
 				$message
 			);
 
-			Helper::log( $log_message, 'Withdraw', 'debug'   );
+			Helper::log( $log_message, 'Withdraw', 'debug' );
 
 			return new WP_Error( 'lemonway_dokan_rest_withdraw_error', wp_kses_post( $message ) );
 		}

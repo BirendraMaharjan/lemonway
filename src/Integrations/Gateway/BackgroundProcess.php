@@ -49,8 +49,8 @@ class BackgroundProcess {
 		add_action( 'lemonway_payment_p2p_transaction', array( $this, 'schedule_p2p_transaction' ) );
 		add_action( 'lemonway_payment_status_checking', array( $this, 'payment_status_checking' ) );
 
-		//add_action( 'wp_ajax_test_order_cron_hook', array( $this, 'schedule_p2p_transaction' ) );
-		//add_action( 'wp_ajax_nopriv_test_order_cron_hook', array( $this, 'schedule_p2p_transaction' ) );
+		// add_action( 'wp_ajax_test_order_cron_hook', array( $this, 'schedule_p2p_transaction' ) );
+		// add_action( 'wp_ajax_nopriv_test_order_cron_hook', array( $this, 'schedule_p2p_transaction' ) );
 	}
 
 
@@ -206,7 +206,8 @@ class BackgroundProcess {
 				$vendor_raw_earning = dokan()->commission->get_earning_by_order( $tmp_order, 'seller' );
 				$total_cost         = Helper::toCents( $tmp_order->get_total() );
 
-				/*$store_info = dokan_get_store_info( $vendor_id );
+				/*
+				$store_info = dokan_get_store_info( $vendor_id );
 
 				// 19% extra commission for Germany vendor
 				$store_country = $store_info['address']['country'] ?? '';

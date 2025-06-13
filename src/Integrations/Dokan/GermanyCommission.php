@@ -42,7 +42,7 @@ class GermanyCommission {
 	public function init() {
 		$this->plugin = Plugin::init();
 
-		//add_filter( 'dokan_order_line_item_commission_settings_before_save', array( $this, 'addExtraCommissionGorGermany' ), 20, 2 );
+		// add_filter( 'dokan_order_line_item_commission_settings_before_save', array( $this, 'addExtraCommissionGorGermany' ), 20, 2 );
 		// Hook into the template loading process to override the commission-meta-box-html.
 		add_filter( 'dokan_get_template_part', array( $this, 'overrideDokanAdminCommissionTemplates' ), 10, 2 );
 	}
@@ -50,8 +50,8 @@ class GermanyCommission {
 	/**
 	 * Adds extra commission for vendors located in Germany.
 	 *
-	 * @param array           $setting Commission settings.
-	 * @param WC_Order_Item   $order   Order item object.
+	 * @param array         $setting Commission settings.
+	 * @param WC_Order_Item $order   Order item object.
 	 *
 	 * @return array Modified commission settings.
 	 */
@@ -61,13 +61,13 @@ class GermanyCommission {
 			return $setting;
 		}
 
-		// Check if commission already applied
+		// Check if commission already applied.
 		$already_applied = $order->get_meta( '_santerris_germany_vendor_commission_applied', true );
 		if ( $already_applied ) {
 			return $setting;
 		}
 
-		// Get the main order
+		// Get the main order.
 		$main_order = $order->get_order();
 		if ( ! $main_order instanceof WC_Order ) {
 			return $setting;
@@ -83,32 +83,30 @@ class GermanyCommission {
 			return $setting;
 		}
 
-
 		$store_info = $vendor->get_shop_info();
-		// Base commission before increase
-		$base_commission = floatval( $setting['percentage'] ?? 0 );
+		// Base commission before increase.
+		$base_commission      = floatval( $setting['percentage'] ?? 0 );
 		$base_flat_commission = floatval( $setting['flat'] ?? 0 );
 		if ( ! empty( $store_info['address']['country'] ) && strtoupper( $store_info['address']['country'] ) === 'DE' ) {
 			$setting['percentage'] = round( $base_commission * 1.19, 2 );
-			$setting['flat'] = round( $base_flat_commission * 1.19, 2 );
+			$setting['flat']       = round( $base_flat_commission * 1.19, 2 );
 		}
 
-		$base_commission = floatval( $setting['percentage'] ?? 0 );
+		$base_commission      = floatval( $setting['percentage'] ?? 0 );
 		$base_flat_commission = floatval( $setting['flat'] ?? 0 );
-		// Save commission meta
+		// Save commission meta.
 		$commission_data = array(
 			'applied'            => true,
 			'seller_id'          => $seller_id,
-			'country'            => $store_info['address']['country'] ?? '', // country at time of order
+			'country'            => $store_info['address']['country'] ?? '', // country at time of order.
 			'order_id'           => $main_order->get_id(),
 			'order_item_id'      => $order->get_id(),
 			'commission'         => $base_commission,
 			'germany_commission' => $setting['percentage'],
 			'flat'               => $base_flat_commission,
 			'germany_flat'       => $setting['flat'],
-			'setting'            => $setting
+			'setting'            => $setting,
 		);
-
 
 		$new = get_post_meta( $order->get_order_id(), '_germany_vendor_commission', true );
 		if ( ! isset( $new['country'] ) ) {
@@ -116,7 +114,7 @@ class GermanyCommission {
 		}
 
 		$order->update_meta_data( '_santerris_germany_vendor_commission_data', $commission_data );
-		$order->update_meta_data( '_santerris_germany_vendor_commission_applied', true ); // Flag so it doesn't re-run
+		$order->update_meta_data( '_santerris_germany_vendor_commission_applied', true ); // Flag so it doesn't re-run.
 		$order->save_meta_data();
 
 		return $setting;

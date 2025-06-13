@@ -492,7 +492,7 @@ class Api {
 		$error_types = array(
 			'Forbidden'                               => esc_html__( 'Forbidden: Please try again.', 'lemonway' ),
 			'Not Found'                               => esc_html__( 'Please reload and try later.', 'lemonway' ),
-			"The requested resource with API version '2' does not support HTTP method 'GET'."                               => esc_html__( 'Please reload and try later.', 'lemonway' ),
+			"The requested resource with API version '2' does not support HTTP method 'GET'." => esc_html__( 'Please reload and try later.', 'lemonway' ),
 			'AMOUNT NOT ALLOWED'                      => esc_html__( 'Amount not allowed', 'lemonway' ),
 			'Incorrect URL address format '           => esc_html__( 'Invalid Website URL', 'lemonway' ),
 			'Amount higher than your account balance' => esc_html__( 'Amount higher than your account balance', 'lemonway' ),
