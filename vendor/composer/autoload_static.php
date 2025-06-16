@@ -7,10 +7,6 @@ namespace Composer\Autoload;
 class ComposerStaticInit13d3c587f66b47fac8a1bed0f9874b5e
 {
     public static $prefixLengthsPsr4 = array (
-        'P' => 
-        array (
-            'PHPCSStandards\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 57,
-        ),
         'L' => 
         array (
             'Lemonway\\' => 9,
@@ -18,10 +14,6 @@ class ComposerStaticInit13d3c587f66b47fac8a1bed0f9874b5e
     );
 
     public static $prefixDirsPsr4 = array (
-        'PHPCSStandards\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dealerdirect/phpcodesniffer-composer-installer/src',
-        ),
         'Lemonway\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
@@ -30,43 +22,43 @@ class ComposerStaticInit13d3c587f66b47fac8a1bed0f9874b5e
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'PHPCSUtils\\AbstractSniffs\\AbstractArrayDeclarationSniff' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/AbstractSniffs/AbstractArrayDeclarationSniff.php',
-        'PHPCSUtils\\BackCompat\\BCFile' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/BackCompat/BCFile.php',
-        'PHPCSUtils\\BackCompat\\BCTokens' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/BackCompat/BCTokens.php',
-        'PHPCSUtils\\BackCompat\\Helper' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/BackCompat/Helper.php',
-        'PHPCSUtils\\Exceptions\\InvalidTokenArray' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Exceptions/InvalidTokenArray.php',
-        'PHPCSUtils\\Exceptions\\TestFileNotFound' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Exceptions/TestFileNotFound.php',
-        'PHPCSUtils\\Exceptions\\TestMarkerNotFound' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Exceptions/TestMarkerNotFound.php',
-        'PHPCSUtils\\Exceptions\\TestTargetNotFound' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Exceptions/TestTargetNotFound.php',
-        'PHPCSUtils\\Fixers\\SpacesFixer' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Fixers/SpacesFixer.php',
-        'PHPCSUtils\\Internal\\Cache' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Internal/Cache.php',
-        'PHPCSUtils\\Internal\\IsShortArrayOrList' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Internal/IsShortArrayOrList.php',
-        'PHPCSUtils\\Internal\\IsShortArrayOrListWithCache' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Internal/IsShortArrayOrListWithCache.php',
-        'PHPCSUtils\\Internal\\NoFileCache' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Internal/NoFileCache.php',
-        'PHPCSUtils\\Internal\\StableCollections' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Internal/StableCollections.php',
-        'PHPCSUtils\\TestUtils\\UtilityMethodTestCase' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/TestUtils/UtilityMethodTestCase.php',
-        'PHPCSUtils\\Tokens\\Collections' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Tokens/Collections.php',
-        'PHPCSUtils\\Tokens\\TokenHelper' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Tokens/TokenHelper.php',
-        'PHPCSUtils\\Utils\\Arrays' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Arrays.php',
-        'PHPCSUtils\\Utils\\Conditions' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Conditions.php',
-        'PHPCSUtils\\Utils\\Context' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Context.php',
-        'PHPCSUtils\\Utils\\ControlStructures' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/ControlStructures.php',
-        'PHPCSUtils\\Utils\\FunctionDeclarations' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/FunctionDeclarations.php',
-        'PHPCSUtils\\Utils\\GetTokensAsString' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/GetTokensAsString.php',
-        'PHPCSUtils\\Utils\\Lists' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Lists.php',
-        'PHPCSUtils\\Utils\\MessageHelper' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/MessageHelper.php',
-        'PHPCSUtils\\Utils\\Namespaces' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Namespaces.php',
-        'PHPCSUtils\\Utils\\NamingConventions' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/NamingConventions.php',
-        'PHPCSUtils\\Utils\\Numbers' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Numbers.php',
-        'PHPCSUtils\\Utils\\ObjectDeclarations' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/ObjectDeclarations.php',
-        'PHPCSUtils\\Utils\\Operators' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Operators.php',
-        'PHPCSUtils\\Utils\\Orthography' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Orthography.php',
-        'PHPCSUtils\\Utils\\Parentheses' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Parentheses.php',
-        'PHPCSUtils\\Utils\\PassedParameters' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/PassedParameters.php',
-        'PHPCSUtils\\Utils\\Scopes' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Scopes.php',
-        'PHPCSUtils\\Utils\\TextStrings' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/TextStrings.php',
-        'PHPCSUtils\\Utils\\UseStatements' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/UseStatements.php',
-        'PHPCSUtils\\Utils\\Variables' => __DIR__ . '/..' . '/phpcsstandards/phpcsutils/PHPCSUtils/Utils/Variables.php',
+        'Lemonway\\App\\Backend\\Notices' => __DIR__ . '/../..' . '/src/App/Backend/Notices.php',
+        'Lemonway\\App\\Backend\\Settings' => __DIR__ . '/../..' . '/src/App/Backend/Settings.php',
+        'Lemonway\\App\\Frontend\\Enqueue' => __DIR__ . '/../..' . '/src/App/Frontend/Enqueue.php',
+        'Lemonway\\App\\Frontend\\Templates' => __DIR__ . '/../..' . '/src/App/Frontend/Templates.php',
+        'Lemonway\\Bootstrap' => __DIR__ . '/../..' . '/src/Bootstrap.php',
+        'Lemonway\\Common\\Abstracts\\Base' => __DIR__ . '/../..' . '/src/Common/Abstracts/Base.php',
+        'Lemonway\\Common\\Functions' => __DIR__ . '/../..' . '/src/Common/Functions.php',
+        'Lemonway\\Common\\Traits\\Requester' => __DIR__ . '/../..' . '/src/Common/Traits/Requester.php',
+        'Lemonway\\Common\\Traits\\Singleton' => __DIR__ . '/../..' . '/src/Common/Traits/Singleton.php',
+        'Lemonway\\Common\\Utils\\Errors' => __DIR__ . '/../..' . '/src/Common/Utils/Errors.php',
+        'Lemonway\\Config\\Classes' => __DIR__ . '/../..' . '/src/Config/Classes.php',
+        'Lemonway\\Config\\I18n' => __DIR__ . '/../..' . '/src/Config/I18n.php',
+        'Lemonway\\Config\\Plugin' => __DIR__ . '/../..' . '/src/Config/Plugin.php',
+        'Lemonway\\Config\\Requirements' => __DIR__ . '/../..' . '/src/Config/Requirements.php',
+        'Lemonway\\Config\\Setup' => __DIR__ . '/../..' . '/src/Config/Setup.php',
+        'Lemonway\\Integrations\\Dokan\\Dokan' => __DIR__ . '/../..' . '/src/Integrations/Dokan/Dokan.php',
+        'Lemonway\\Integrations\\Dokan\\GermanyCommission' => __DIR__ . '/../..' . '/src/Integrations/Dokan/GermanyCommission.php',
+        'Lemonway\\Integrations\\Dokan\\Refund' => __DIR__ . '/../..' . '/src/Integrations/Dokan/Refund.php',
+        'Lemonway\\Integrations\\Dokan\\ReturnWarranty' => __DIR__ . '/../..' . '/src/Integrations/Dokan/ReturnWarranty.php',
+        'Lemonway\\Integrations\\Dokan\\SettingDokan' => __DIR__ . '/../..' . '/src/Integrations/Dokan/SettingDokan.php',
+        'Lemonway\\Integrations\\Dokan\\UserProfile' => __DIR__ . '/../..' . '/src/Integrations/Dokan/UserProfile.php',
+        'Lemonway\\Integrations\\Dokan\\VendorProfile' => __DIR__ . '/../..' . '/src/Integrations/Dokan/VendorProfile.php',
+        'Lemonway\\Integrations\\Dokan\\Withdraw' => __DIR__ . '/../..' . '/src/Integrations/Dokan/Withdraw.php',
+        'Lemonway\\Integrations\\Form\\Countries' => __DIR__ . '/../..' . '/src/Integrations/Form/Countries.php',
+        'Lemonway\\Integrations\\Form\\Fields' => __DIR__ . '/../..' . '/src/Integrations/Form/Fields.php',
+        'Lemonway\\Integrations\\Gateway\\BackgroundProcess' => __DIR__ . '/../..' . '/src/Integrations/Gateway/BackgroundProcess.php',
+        'Lemonway\\Integrations\\Gateway\\Handler' => __DIR__ . '/../..' . '/src/Integrations/Gateway/Handler.php',
+        'Lemonway\\Integrations\\Gateway\\Helper' => __DIR__ . '/../..' . '/src/Integrations/Gateway/Helper.php',
+        'Lemonway\\Integrations\\Gateway\\Lemonway' => __DIR__ . '/../..' . '/src/Integrations/Gateway/Lemonway.php',
+        'Lemonway\\Integrations\\Gateway\\RegisterGateway' => __DIR__ . '/../..' . '/src/Integrations/Gateway/RegisterGateway.php',
+        'Lemonway\\Integrations\\Gateway\\Settings' => __DIR__ . '/../..' . '/src/Integrations/Gateway/Settings.php',
+        'Lemonway\\Integrations\\Lemonway\\Account' => __DIR__ . '/../..' . '/src/Integrations/Lemonway/Account.php',
+        'Lemonway\\Integrations\\Lemonway\\Api' => __DIR__ . '/../..' . '/src/Integrations/Lemonway/Api.php',
+        'Lemonway\\Integrations\\Lemonway\\Iban' => __DIR__ . '/../..' . '/src/Integrations/Lemonway/Iban.php',
+        'Lemonway\\Integrations\\Lemonway\\Payment' => __DIR__ . '/../..' . '/src/Integrations/Lemonway/Payment.php',
+        'Lemonway\\Integrations\\Lemonway\\Refund' => __DIR__ . '/../..' . '/src/Integrations/Lemonway/Refund.php',
+        'Lemonway\\Integrations\\Lemonway\\Transaction' => __DIR__ . '/../..' . '/src/Integrations/Lemonway/Transaction.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
